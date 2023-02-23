@@ -2,7 +2,10 @@ import { Client, GatewayIntentBits, REST, Routes } from "discord.js";
 import * as dotenv from "dotenv";
 import * as FileSystem from "fs";
 import mysql from "mysql";
+import VerifyButton from "./commands/button_verify";
+import NickCommand from "./commands/command_nick";
 import VerifyCommand from "./commands/command_verify";
+import VerifyModal from "./commands/modal_verify";
 import InteractionCreateEvent from "./events/event_interaction_create";
 import ReadyEvent from "./events/event_ready";
 import Registry from "./objects/registry";
@@ -23,6 +26,9 @@ export const verification_database = mysql.createConnection({
 // registry
 export const verification_registry = new Registry();
 verification_registry.register(new VerifyCommand);
+verification_registry.register(new NickCommand);
+verification_registry.register(new VerifyButton);
+verification_registry.register(new VerifyModal);
 verification_registry.register(new ReadyEvent);
 verification_registry.register(new InteractionCreateEvent);
 

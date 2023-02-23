@@ -3,13 +3,9 @@ import Logger from "../objects/logger";
 export default class VerificationEvent {
 
     public event_configuration(): {name: string} {
-        return {
-            name: "default"
-        };
+        return {name: "default"};
     }
 
-    public async event_trigger(...event_arguments: any[]): Promise<void> {
-        Logger.send_log("Unhandled event trigger.");
-    }
+    public async event_trigger(...event_arguments: any[]): Promise<void> {}
 
 }
