@@ -1,4 +1,5 @@
 import { BaseInteraction } from "discord.js";
+import { verification_registry } from "..";
 import VerificationEvent from "../templates/template_event";
 
 export default class InteractionCreateEvent extends VerificationEvent {
@@ -10,7 +11,7 @@ export default class InteractionCreateEvent extends VerificationEvent {
     }
 
     public async event_trigger(interaction: BaseInteraction): Promise<void> {
-        if (interaction.isCommand()) interaction.reply("Received command input.");
+        if (interaction.isCommand()) await verification_registry.command_trigger(interaction);
     }
 
 }

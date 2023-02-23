@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import VerificationCommand from "../templates/template_command";
 import VerificationEvent from "../templates/template_event";
 
@@ -23,6 +23,10 @@ export default class Registry {
 
     public command_signatures(): SlashCommandBuilder[] {
         return Array.from(this.registered_commands, command_signature => command_signature[1].command_configuration());
+    }
+
+    public async command_trigger(command_interaction: CommandInteraction): Promise<void> {
+        await this.registered_commands.get(command_interaction.commandName)?.command_trigger(command_interaction);
     }
 
 }
