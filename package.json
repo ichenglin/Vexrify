@@ -1,0 +1,21 @@
+{
+  "name": "vrc-verification",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Icheng Lin",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.7.1",
+    "dotenv": "^16.0.3",
+    "mysql": "^2.18.1",
+    "node-fetch": "^2.6.9"
+  },
+  "devDependencies": {
+    "@types/mysql": "^2.15.21",
+    "@types/node-fetch": "^2.6.2"
+  }
+}
