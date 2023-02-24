@@ -9,7 +9,7 @@ export default class AwardsCommand extends VerificationCommand {
             .setName("awards")
             .setDescription("Retrieves all the awards own by a team.");
         command_builder.addStringOption(option => option
-            .setName("team_number")
+            .setName("team")
             .setDescription("The number of the team.")
             .setMaxLength(8)
             .setRequired(true)
@@ -19,7 +19,7 @@ export default class AwardsCommand extends VerificationCommand {
 
     public async command_trigger(command_interaction: ChatInputCommandInteraction): Promise<void> {
         await command_interaction.deferReply();
-        const team_number = command_interaction.options.getString("team_number", true);
+        const team_number = command_interaction.options.getString("team", true);
         const team_data = await RobotEvent.get_team_by_number(team_number);
         if (team_data === undefined) {
             // invalid team

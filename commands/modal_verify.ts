@@ -26,6 +26,15 @@ export default class VerifyModal extends VerificationModal {
             await modal_interaction.editReply({embeds: [invalid_embed]});
             return;
         }
+        if (form_user_name.match(/[^\w\d\s]/g) !== null) {
+            // prohibited characters in name
+            const invalid_embed = new EmbedBuilder()
+                .setTitle("⛔ Prohibited Nickname ⛔")
+                .setDescription("You are only allowed to use **letters**, **numbers**, and **whitespaces** in your nickname!")
+                .setColor("#ef4444");
+            await modal_interaction.editReply({embeds: [invalid_embed],});
+            return;
+        }
         // successful reply
         const verified_embed = new EmbedBuilder()
             .setTitle("✅ Verification Request Accepted ✅")

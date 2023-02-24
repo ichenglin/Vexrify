@@ -10,7 +10,7 @@ export default class NickCommand extends VerificationCommand {
             .setDescription("Updates the nickname of verified user.")
             .setDMPermission(false);
         command_builder.addStringOption(option => option
-            .setName("nickname")
+            .setName("name")
             .setDescription("The new nickname of the user.")
             .setMaxLength(16)
             .setRequired(true)
@@ -25,12 +25,21 @@ export default class NickCommand extends VerificationCommand {
             // user not verified
             const permission_embed = new EmbedBuilder()
                 .setTitle("⛔ Verification Required ⛔")
-                .setDescription(`**You are not verified!** If you believe this is in error, please contact an administrator.`)
+                .setDescription("**You are not verified!** If you believe this is in error, please contact an administrator.")
                 .setColor("#ef4444");
             await command_interaction.editReply({embeds: [permission_embed],});
             return;
         }
-        const user_nick = command_interaction.options.getString("nickname", true);
+        const user_nick = command_interaction.options.getString("name", true);
+        if (user_nick.match(/[^\w\d\s]/g) !== null) {
+            // prohibited characters in name
+            const invalid_embed = new EmbedBuilder()
+                .setTitle("⛔ Prohibited Nickname ⛔")
+                .setDescription("You are only allowed to use **letters**, **numbers**, and **whitespaces** in your nickname!")
+                .setColor("#ef4444");
+            await command_interaction.editReply({embeds: [invalid_embed],});
+            return;
+        }
         user_data.user_name = user_nick;
         await VerificationUser.username_set(command_interaction.guild as Guild, command_interaction.user, `${user_nick} | ${user_data.user_team_number}`);
         const nick_embed = new EmbedBuilder()

@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, CommandInteraction, EmbedBuilder, SlashCommandBuilder, TextChannel } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, CommandInteraction, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, TextChannel } from "discord.js";
 import VerificationCommand from "../templates/template_command";
 
 export default class VerifyCommand extends VerificationCommand {
@@ -7,7 +7,8 @@ export default class VerifyCommand extends VerificationCommand {
         return new SlashCommandBuilder()
         .setName("verify")
         .setDescription("Generates an embed with verification instructions.")
-        .setDMPermission(false);
+        .setDMPermission(false)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
     }
 
     public async command_trigger(command_interaction: ChatInputCommandInteraction): Promise<void> {

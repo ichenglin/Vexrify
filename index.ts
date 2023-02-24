@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, REST, Routes } from "discord.js";
+import { ActivityType, Client, ClientUser, GatewayIntentBits, REST, Routes } from "discord.js";
 import * as dotenv from "dotenv";
 import * as FileSystem from "fs";
 import mysql from "mysql";
@@ -47,4 +47,11 @@ for (const event_signature of verification_registry.event_signatures()) discord_
 (async () => {
     await discord_rest.put(Routes.applicationCommands(process.env.APPLICATION_ID as string), {body: verification_registry.command_signatures()});
     await discord_client.login(process.env.APPLICATION_TOKEN as string);
+    (discord_client.user as ClientUser).setPresence({
+        status: "online",
+        activities: [{
+            name: "Vex Robotics",
+            type: ActivityType.Playing,
+        }]
+    });
 })();
