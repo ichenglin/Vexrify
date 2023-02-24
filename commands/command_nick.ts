@@ -32,7 +32,6 @@ export default class NickCommand extends VerificationCommand {
         }
         const user_nick = command_interaction.options.getString("nickname", true);
         user_data.user_name = user_nick;
-        await VerificationUser.data_add(user_data);
         await VerificationUser.username_set(command_interaction.guild as Guild, command_interaction.user, `${user_nick} | ${user_data.user_team_number}`);
         const nick_embed = new EmbedBuilder()
             .setTitle("💳 Updated Nickname 💳")
@@ -44,5 +43,6 @@ export default class NickCommand extends VerificationCommand {
             .setDescription(`The verification bot **couldn't edit the guild owner's nickname** due to Discord restrictions, please update your nickname manually. **(Do not report this as a bug)**`)
             .setColor("#f97316");
         await command_interaction.editReply({embeds: (!permission_owner ? [nick_embed] : [nick_embed, permission_embed])});
+        await VerificationUser.data_add(user_data);
     }
 }

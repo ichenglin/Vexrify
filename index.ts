@@ -2,6 +2,7 @@ import { Client, GatewayIntentBits, REST, Routes } from "discord.js";
 import * as dotenv from "dotenv";
 import * as FileSystem from "fs";
 import mysql from "mysql";
+import Logger from "./objects/logger";
 import VerifyButton from "./commands/button_verify";
 import AwardsCommand from "./commands/command_awards";
 import NickCommand from "./commands/command_nick";
@@ -23,6 +24,7 @@ export const verification_database = mysql.createConnection({
         rejectUnauthorized: false
     }
 });
+verification_database.connect(() => Logger.send_log("Database Connected."));
 
 // registry
 export const verification_registry = new Registry();

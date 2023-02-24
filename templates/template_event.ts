@@ -1,5 +1,3 @@
-import Logger from "../objects/logger";
-
 export default class VerificationEvent {
 
     public event_configuration(): {name: string} {

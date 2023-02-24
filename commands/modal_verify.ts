@@ -15,7 +15,6 @@ export default class VerifyModal extends VerificationModal {
         await modal_interaction.deferReply({ephemeral: true});
         const form_team_number = modal_interaction.fields.getTextInputValue("application_team");
         const form_user_name   = modal_interaction.fields.getTextInputValue("application_nick");
-        const form_reason      = modal_interaction.fields.getTextInputValue("application_reason");
         // check for valid team id
         const team_data = await RobotEvent.get_team_by_number(form_team_number);
         if (team_data === undefined) {
@@ -27,14 +26,6 @@ export default class VerifyModal extends VerificationModal {
             await modal_interaction.editReply({embeds: [invalid_embed]});
             return;
         }
-        // save to database
-        await VerificationUser.data_add({
-            user_id:          modal_interaction.user.id,
-            guild_id:         modal_interaction.guild?.id as string,
-            user_team_id:     team_data.team_id,
-            user_team_number: form_team_number,
-            user_name:        form_user_name
-        });
         // successful reply
         const verified_embed = new EmbedBuilder()
             .setTitle("✅ Verification Request Accepted ✅")
@@ -53,6 +44,14 @@ export default class VerifyModal extends VerificationModal {
         await VerificationUser.username_set(modal_interaction.guild as Guild, modal_interaction.user, `${form_user_name} | ${team_data.team_number}`)
         await VerificationUser.role_add(modal_interaction.guild as Guild, "Verified", modal_interaction.user);
         await modal_interaction.editReply({embeds: (!permission_owner ? [verified_embed] : [verified_embed, permission_embed])});
+        // save to database
+        await VerificationUser.data_add({
+            user_id:          modal_interaction.user.id,
+            guild_id:         modal_interaction.guild?.id as string,
+            user_team_id:     team_data.team_id,
+            user_team_number: form_team_number,
+            user_name:        form_user_name
+        });
     }
 
 }
