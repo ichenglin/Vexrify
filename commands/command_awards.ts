@@ -35,7 +35,7 @@ export default class AwardsCommand extends VerificationCommand {
             // no awards
             const invalid_embed = new EmbedBuilder()
                 .setTitle(`🏅 ${team_data.team_name}'s Awards 🏅`)
-                .setDescription(`**${team_data.team_name} (${team_data.team_number})** hadn't won any awards. 😢`)
+                .setDescription(`**${team_data.team_name} (${team_data.team_number})** hasn't won any awards. 😢`)
                 .setColor("#ef4444");
             await command_interaction.editReply({embeds: [invalid_embed]});
             return;
@@ -48,7 +48,7 @@ export default class AwardsCommand extends VerificationCommand {
         }
         const awards_embed = new EmbedBuilder()
             .setTitle(`🏅 ${team_data.team_name}'s Awards 🏅`)
-            .setDescription(`**${team_data.team_name} (${team_data.team_number})** had won a total of **${team_awards.length} awards**, below are the details awards and their events.`)
+            .setDescription(`**${team_data.team_name} (${team_data.team_number})** had won a total of **${team_awards.length} awards**, below are the details of the awards and their events.`)
             .addFields(
                 {name: "\u200B", value: "\u200B"},
                 ...Array.from(team_awards_sorted.entries()).map((award_data) => ({name: `🎖️ ${award_data[0]} x${award_data[1].length}`, value: `${"```"}${award_data[1].join("\n")}${"```"}`}))

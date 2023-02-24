@@ -5,7 +5,8 @@ export default class RobotEvent {
     public static async get_team_by_number(team_number: string): Promise<TeamData | undefined> {
         const api_response = await fetch(`https://www.robotevents.com/api/v2/teams?number=${team_number}`, {headers: this.get_authorization()}).then(response => response.json()) as any;
         if (api_response.data.length <= 0) return undefined;
-        const api_team = api_response.data[api_response.data.length - 1];
+        const grade_priority = ["College", "High School", "Middle School", "Elementary School"];
+        const api_team = api_response.data.sort((team_a: any, team_b: any) => grade_priority.indexOf(team_b.grade) - grade_priority.indexOf(team_a.grade))[api_response.data.length - 1];
         return {
             team_id:           api_team.id,
             team_number:       api_team.number,
