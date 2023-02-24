@@ -7,7 +7,8 @@ export default class NickCommand extends VerificationCommand {
     public command_configuration(): SlashCommandBuilder {
         const command_builder = new SlashCommandBuilder()
             .setName("nick")
-            .setDescription("Updates the nickname of verified user.");
+            .setDescription("Updates the nickname of verified user.")
+            .setDMPermission(false);
         command_builder.addStringOption(option => option
             .setName("nickname")
             .setDescription("The new nickname of the user.")

@@ -6,7 +6,8 @@ export default class VerifyCommand extends VerificationCommand {
     public command_configuration(): SlashCommandBuilder {
         return new SlashCommandBuilder()
         .setName("verify")
-        .setDescription("Generates an embed with verification instructions.");
+        .setDescription("Generates an embed with verification instructions.")
+        .setDMPermission(false);
     }
 
     public async command_trigger(command_interaction: ChatInputCommandInteraction): Promise<void> {

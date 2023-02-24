@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 import * as FileSystem from "fs";
 import mysql from "mysql";
 import VerifyButton from "./commands/button_verify";
+import AwardsCommand from "./commands/command_awards";
 import NickCommand from "./commands/command_nick";
 import VerifyCommand from "./commands/command_verify";
 import VerifyModal from "./commands/modal_verify";
@@ -27,6 +28,7 @@ export const verification_database = mysql.createConnection({
 export const verification_registry = new Registry();
 verification_registry.register(new VerifyCommand);
 verification_registry.register(new NickCommand);
+verification_registry.register(new AwardsCommand);
 verification_registry.register(new VerifyButton);
 verification_registry.register(new VerifyModal);
 verification_registry.register(new ReadyEvent);
