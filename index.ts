@@ -2,6 +2,7 @@ import { ActivityType, Client, ClientUser, GatewayIntentBits, REST, Routes } fro
 import * as dotenv from "dotenv";
 import * as FileSystem from "fs";
 import mysql from "mysql";
+import { createClient } from "redis";
 import Logger from "./objects/logger";
 import VerifyButton from "./commands/button_verify";
 import AwardsCommand from "./commands/command_awards";
@@ -25,7 +26,7 @@ export const verification_database = mysql.createConnection({
         rejectUnauthorized: false
     }
 });
-verification_database.connect(() => Logger.send_log("Database Connected."));
+export const verification_cache = createClient({password: process.env.REDIS_PASSWORD});
 
 // registry
 export const verification_registry = new Registry();
@@ -46,7 +47,12 @@ discord_rest.setToken(process.env.APPLICATION_TOKEN as string);
 const discord_client = new Client({intents: [GatewayIntentBits.Guilds]});
 for (const event_signature of verification_registry.event_signatures()) discord_client.on(event_signature.event_configuration().name, async (...args) => await event_signature.event_trigger(...args));
 
+verification_cache.on("error", error => Logger.send_log("Cache login error."));
+
 (async () => {
+    verification_database.connect(() => Logger.send_log("Database Connected."));
+    await verification_cache.connect();
+
     await discord_rest.put(Routes.applicationCommands(process.env.APPLICATION_ID as string), {body: verification_registry.command_signatures()});
     await discord_client.login(process.env.APPLICATION_TOKEN as string);
     (discord_client.user as ClientUser).setPresence({

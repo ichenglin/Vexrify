@@ -1,14 +1,18 @@
 import fetch from "node-fetch";
-import * as FileSystem from "fs";
+import VerificationCache from "./cache";
 
 export default class RobotEvent {
 
     public static async get_team_by_number(team_number: string): Promise<TeamData | undefined> {
+        // load cache
+        const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_TEAMBYNUMBER_${team_number}`);
+        if (api_cache !== undefined) return api_cache;
+        // cache not exist
         const api_response = await fetch(`https://www.robotevents.com/api/v2/teams?number=${team_number}`, {headers: this.get_authorization()}).then(response => response.json()) as any;
         if (api_response.data.length <= 0) return undefined;
         const grade_priority = ["College", "High School", "Middle School", "Elementary School"];
         const api_team = api_response.data.sort((team_a: any, team_b: any) => grade_priority.indexOf(team_b.grade) - grade_priority.indexOf(team_a.grade))[api_response.data.length - 1];
-        return {
+        const result = {
             team_id:           api_team.id,
             team_number:       api_team.number,
             team_name:         api_team.team_name,
@@ -17,10 +21,16 @@ export default class RobotEvent {
             team_program:      (api_team.program  === undefined) || (api_team.program.name),
             team_grade:        api_team.grade
         };
+        await VerificationCache.cache_set(`ROBOTEVENT_TEAMBYNUMBER_${team_number}`, result);
+        return result;
     }
 
     public static async get_team_awards(team_id: number): Promise<TeamAward[]> {
-        return (await this.get_response(`teams/${team_id}/awards`)).map((award_data: any) => ({
+        // load cache
+        const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_TEAMAWARDS_${team_id}`);
+        if (api_cache !== undefined) return api_cache;
+        // cache not exist
+        const result = (await this.get_response(`teams/${team_id}/awards`)).map((award_data: any) => ({
             award_id:       award_data.id,
             award_name:     award_data.title.match(/^([^\(]+)\s\(/)[1],
             award_event: {
@@ -28,10 +38,16 @@ export default class RobotEvent {
                 event_name: award_data.event.name
             }
         } as TeamAward));
+        await VerificationCache.cache_set(`ROBOTEVENT_TEAMAWARDS_${team_id}`, result);
+        return result;
     }
 
     public static async get_team_skills(team_id: number): Promise<TeamSkills[]> {
-        return (await this.get_response(`teams/${team_id}/skills`)).map((skill_data: any) => ({
+        // load cache
+        const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_TEAMSKILLS_${team_id}`);
+        if (api_cache !== undefined) return api_cache;
+        // cache not exist
+        const result = (await this.get_response(`teams/${team_id}/skills`)).map((skill_data: any) => ({
             skill_id:        skill_data.id,
             skill_type:      skill_data.type,
             skill_score:     skill_data.score,
@@ -45,11 +61,17 @@ export default class RobotEvent {
                 season_name: skill_data.season.name
             }
         } as TeamSkills));
+        await VerificationCache.cache_set(`ROBOTEVENT_TEAMSKILLS_${team_id}`, result);
+        return result;
     }
 
     public static async get_season_skills(season_id: number): Promise<SeasonSkills[]> {
+        // load cache
+        const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_SEASONSKILLS_${season_id}`);
+        if (api_cache !== undefined) return api_cache
+        // cache not exist
         const api_response = await fetch(`https://www.robotevents.com/api/seasons/${season_id}/skills`, {headers: this.get_authorization()}).then(response => response.json()) as any[];
-        return api_response.map(skill_data => ({
+        const result = api_response.map(skill_data => ({
             skills_rank:           skill_data.rank,
             skills_entries:        api_response.length,
             skills_team: {
@@ -70,6 +92,8 @@ export default class RobotEvent {
                 programming_score_date: skill_data.scores.progScoredAt,
             }
         } as SeasonSkills));
+        await VerificationCache.cache_set(`ROBOTEVENT_SEASONSKILLS_${season_id}`, result);
+        return result;
     }
 
     private static async get_response(api_path: string): Promise<any[]> {
