@@ -19,20 +19,27 @@ export default class RobotEvent {
     }
 
     public static async get_team_awards(team_id: number): Promise<TeamAward[]> {
-        const api_response = await fetch(`https://www.robotevents.com/api/v2/teams/${team_id}/awards`, {headers: this.get_authorization()}).then(response => response.json()) as any;
+        return (await this.get_response(`teams/${team_id}/awards`)).map((award_data: any) => ({
+            award_id:       award_data.id,
+            award_name:     award_data.title.match(/^([^\(]+)\s\(/)[1],
+            award_event:    {
+                event_id:   award_data.event.id,
+                event_name: award_data.event.name
+            }
+        } as TeamAward));
+    }
+
+    private static async get_response(api_path: string): Promise<any[]> {
+        const api_response = await fetch(`https://www.robotevents.com/api/v2/${api_path}`, {headers: this.get_authorization()}).then(response => response.json()) as any;
         if (api_response.data.length <= 0) return [];
-        const team_awards: any[] = api_response.data;
+        const api_data: any[] = api_response.data;
         const api_response_continued = await Promise.all(new Array(api_response.meta.last_page - 1).fill(0).map((zero_lol, page_index) => 
-            fetch(`https://www.robotevents.com/api/v2/teams/${team_id}/awards?page=${api_response.meta.last_page - page_index}`, {headers: this.get_authorization()}).then(response => response.json())
+            fetch(`https://www.robotevents.com/api/v2/${api_path}?page=${api_response.meta.last_page - page_index}`, {headers: this.get_authorization()}).then(response => response.json())
         ));
         for (let page_index = 0; page_index < (api_response.meta.last_page - 1); page_index++) {
-            team_awards.push(...api_response_continued[page_index].data);
+            api_data.push(...api_response_continued[page_index].data);
         }
-        return team_awards.map((award_data: any) => ({
-            award_id:    award_data.id,
-            award_name:  award_data.title.match(/^([^\(]+)\s\(/)[1],
-            award_event: award_data.event.name
-        } as TeamAward));
+        return api_data;
     }
 
     private static get_authorization() {
@@ -55,7 +62,10 @@ export interface TeamData {
 }
 
 export interface TeamAward {
-    award_id:    number,
-    award_name:  string,
-    award_event: string
+    award_id:       number,
+    award_name:     string,
+    award_event: {
+        event_id:   number,
+        event_name: string
+    }
 }

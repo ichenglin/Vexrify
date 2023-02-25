@@ -1,4 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import VerificationPriority from "../utilities/priority";
 import RobotEvent from "../objects/robotevent";
 import VerificationCommand from "../templates/template_command";
 
@@ -41,19 +42,19 @@ export default class AwardsCommand extends VerificationCommand {
             await command_interaction.editReply({embeds: [invalid_embed]});
             return;
         }
-        const team_awards_sorted = new Map<string, string[]>();
+        const team_awards_classified = new Map<string, string[]>();
         for (let award_index = 0; award_index < team_awards.length; award_index++) {
             const award_data = team_awards[award_index];
-            if (!team_awards_sorted.has(award_data.award_name)) team_awards_sorted.set(award_data.award_name, []);
-            team_awards_sorted.get(award_data.award_name)?.push(award_data.award_event);
+            if (!team_awards_classified.has(award_data.award_name)) team_awards_classified.set(award_data.award_name, []);
+            team_awards_classified.get(award_data.award_name)?.push(award_data.award_event.event_name);
         }
-
+        const team_awards_sorted = Array.from(team_awards_classified.entries()).map(award_data => ({award_name: award_data[0], award_events: award_data[1]})).sort((award_a, award_b) => VerificationPriority.priority_awards(award_b.award_name) - VerificationPriority.priority_awards(award_a.award_name));
         const awards_embed = new EmbedBuilder()
             .setTitle(`🏅 ${team_data.team_name}'s Awards 🏅`)
             .setDescription(`**${team_data.team_name} (${team_data.team_number})** had won a total of **${team_awards.length} awards**, below are the details of the awards and their events.\n\u200B`)
             .addFields(
-                ...Array.from(team_awards_sorted.entries()).flatMap((award_data) => [
-                    {name: `🎖️ ${award_data[0]} x${award_data[1].length} 🎖️`, value: award_data[1].map((event_data, event_index) => `▪️ \`${event_data}\``).join("\n")}
+                ...team_awards_sorted.flatMap((award_data) => [
+                    {name: `🎖️ ${award_data.award_name} x${award_data.award_events.length} 🎖️`, value: award_data.award_events.map((event_data, event_index) => `▪️ \`${event_data}\``).join("\n")}
                 ]))
             .setColor("#84cc16");
         await command_interaction.editReply({embeds: [awards_embed]});

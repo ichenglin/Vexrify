@@ -13,6 +13,7 @@ export default class NickCommand extends VerificationCommand {
             .setName("name")
             .setDescription("The new nickname of the user.")
             .setMaxLength(16)
+            .setMinLength(1)
             .setRequired(true)
         );
         return command_builder;

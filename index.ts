@@ -11,6 +11,7 @@ import VerifyModal from "./commands/modal_verify";
 import InteractionCreateEvent from "./events/event_interaction_create";
 import ReadyEvent from "./events/event_ready";
 import Registry from "./objects/registry";
+import RobotEvent from "./objects/robotevent";
 
 dotenv.config();
 
@@ -42,7 +43,7 @@ discord_rest.setToken(process.env.APPLICATION_TOKEN as string);
 
 // client
 const discord_client = new Client({intents: [GatewayIntentBits.Guilds]});
-for (const event_signature of verification_registry.event_signatures()) discord_client.on(event_signature.event_configuration().name, event_signature.event_trigger);
+for (const event_signature of verification_registry.event_signatures()) discord_client.on(event_signature.event_configuration().name, async (...args) => await event_signature.event_trigger(...args));
 
 (async () => {
     await discord_rest.put(Routes.applicationCommands(process.env.APPLICATION_ID as string), {body: verification_registry.command_signatures()});

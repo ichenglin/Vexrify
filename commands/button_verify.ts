@@ -28,11 +28,13 @@ export default class VerifyButton extends VerificationButton {
             .setCustomId("application_team")
             .setLabel("Team ID (Example: 69420A)")
             .setMaxLength(8)
+            .setMinLength(2)
             .setStyle(TextInputStyle.Short);
         const verify_input_nick = new TextInputBuilder()
             .setCustomId("application_nick")
             .setLabel("Nickname")
             .setMaxLength(16)
+            .setMinLength(1)
             .setStyle(TextInputStyle.Short);
         const verify_input_reason = new TextInputBuilder()
             .setCustomId("application_reason")
