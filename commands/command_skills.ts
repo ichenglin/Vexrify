@@ -1,6 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import VerificationPriority from "../utilities/priority";
-import RobotEvent, { SeasonData, TeamSkills } from "../objects/robotevent";
+import RobotEvent, { SeasonData } from "../objects/robotevent";
 import VerificationCommand from "../templates/template_command";
 
 export default class SkillsCommand extends VerificationCommand {
@@ -36,7 +35,7 @@ export default class SkillsCommand extends VerificationCommand {
         if (team_skills.length <= 0) {
             // no awards
             const invalid_embed = new EmbedBuilder()
-                .setTitle(`🏅 ${team_data.team_name}'s Skills 🏅`)
+                .setTitle(`⚡ ${team_data.team_name}'s Skills ⚡`)
                 .setDescription(`**${team_data.team_name} (${team_data.team_number})** don't have any skills record. 😢`)
                 .setColor("#ef4444");
             await command_interaction.editReply({embeds: [invalid_embed]});
@@ -71,6 +70,6 @@ export default class SkillsCommand extends VerificationCommand {
                     ].join("\n")}
                 )))
             .setColor("#84cc16");
-            await command_interaction.editReply({embeds: [skills_embed]});
+        await command_interaction.editReply({embeds: [skills_embed]});
     }
 }
