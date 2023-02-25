@@ -21,7 +21,14 @@ export default class RobotEvent {
     public static async get_team_awards(team_id: number): Promise<TeamAward[]> {
         const api_response = await fetch(`https://www.robotevents.com/api/v2/teams/${team_id}/awards`, {headers: this.get_authorization()}).then(response => response.json()) as any;
         if (api_response.data.length <= 0) return [];
-        return api_response.data.map((award_data: any) => ({
+        const team_awards: any[] = api_response.data;
+        const api_response_continued = await Promise.all(new Array(api_response.meta.last_page - 1).fill(0).map((zero_lol, page_index) => 
+            fetch(`https://www.robotevents.com/api/v2/teams/${team_id}/awards?page=${api_response.meta.last_page - page_index}`, {headers: this.get_authorization()}).then(response => response.json())
+        ));
+        for (let page_index = 0; page_index < (api_response.meta.last_page - 1); page_index++) {
+            team_awards.push(...api_response_continued[page_index].data);
+        }
+        return team_awards.map((award_data: any) => ({
             award_id:    award_data.id,
             award_name:  award_data.title.match(/^([^\(]+)\s\(/)[1],
             award_event: award_data.event.name

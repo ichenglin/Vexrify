@@ -12,6 +12,7 @@ export default class AwardsCommand extends VerificationCommand {
             .setName("team")
             .setDescription("The number of the team.")
             .setMaxLength(8)
+            .setMinLength(2)
             .setRequired(true)
         );
         return command_builder;
@@ -46,13 +47,14 @@ export default class AwardsCommand extends VerificationCommand {
             if (!team_awards_sorted.has(award_data.award_name)) team_awards_sorted.set(award_data.award_name, []);
             team_awards_sorted.get(award_data.award_name)?.push(award_data.award_event);
         }
+
         const awards_embed = new EmbedBuilder()
             .setTitle(`🏅 ${team_data.team_name}'s Awards 🏅`)
-            .setDescription(`**${team_data.team_name} (${team_data.team_number})** had won a total of **${team_awards.length} awards**, below are the details of the awards and their events.`)
+            .setDescription(`**${team_data.team_name} (${team_data.team_number})** had won a total of **${team_awards.length} awards**, below are the details of the awards and their events.\n\u200B`)
             .addFields(
-                {name: "\u200B", value: "\u200B"},
-                ...Array.from(team_awards_sorted.entries()).map((award_data) => ({name: `🎖️ ${award_data[0]} x${award_data[1].length}`, value: `${"```"}${award_data[1].join("\n")}${"```"}`}))
-            )
+                ...Array.from(team_awards_sorted.entries()).flatMap((award_data) => [
+                    {name: `🎖️ ${award_data[0]} x${award_data[1].length} 🎖️`, value: award_data[1].map((event_data, event_index) => `▪️ \`${event_data}\``).join("\n")}
+                ]))
             .setColor("#84cc16");
         await command_interaction.editReply({embeds: [awards_embed]});
     }
