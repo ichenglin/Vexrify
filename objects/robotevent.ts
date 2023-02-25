@@ -66,17 +66,14 @@ export default class RobotEvent {
         return result;
     }
 
-    public static async get_season_skills(season_id: number): Promise<SeasonSkills[]> {
+    public static async get_season_skills(season_id: number, grade_level: string): Promise<SeasonSkills[]> {
         // load cache
         const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_SEASONSKILLS_${season_id}`);
         if (api_cache !== undefined) return api_cache
         // cache not exist
         const api_response = (await Promise.all([
-            fetch(`https://www.robotevents.com/api/seasons/${season_id}/skills?grade_level=College`,         {headers: this.get_authorization()}).then(response => response.json()),
-            fetch(`https://www.robotevents.com/api/seasons/${season_id}/skills?grade_level=High%20School`,   {headers: this.get_authorization()}).then(response => response.json()),
-            fetch(`https://www.robotevents.com/api/seasons/${season_id}/skills?grade_level=Middle%20School`, {headers: this.get_authorization()}).then(response => response.json())
+            fetch(`https://www.robotevents.com/api/seasons/${season_id}/skills?grade_level=${encodeURI(grade_level)}`, {headers: this.get_authorization()}).then(response => response.json())
         ]) as any[][]).filter(skill_data => skill_data.length > 0)[0];
-        console.log(api_response);
         const result = api_response.map(skill_data => ({
             skills_rank:           skill_data.rank,
             skills_entries:        api_response.length,

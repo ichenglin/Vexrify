@@ -51,7 +51,7 @@ export default class SkillsCommand extends VerificationCommand {
             team_season_data.push(skill_data.skill_season);
         }
         const team_season_skills = await Promise.all(team_season_data.map(skill_season => 
-            RobotEvent.get_season_skills(skill_season.season_id)
+            RobotEvent.get_season_skills(skill_season.season_id, team_data.team_grade)
             .then(world_skills => world_skills.filter(skill_data => skill_data.skills_team.team_id === team_data.team_id)[0])
         ));
         const team_season_skills_sorted = team_season_data.map((season_data, season_index) => ({
