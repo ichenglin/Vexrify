@@ -13,6 +13,7 @@ import InteractionCreateEvent from "./events/event_interaction_create";
 import ReadyEvent from "./events/event_ready";
 import Registry from "./objects/registry";
 import SkillsCommand from "./commands/command_skills";
+import HelpButton from "./commands/button_help";
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ verification_registry.register(new NickCommand);
 verification_registry.register(new AwardsCommand);
 verification_registry.register(new SkillsCommand);
 verification_registry.register(new VerifyButton);
+verification_registry.register(new HelpButton);
 verification_registry.register(new VerifyModal);
 verification_registry.register(new ReadyEvent);
 verification_registry.register(new InteractionCreateEvent);
