@@ -11,7 +11,7 @@ import VerifyModal from "./commands/modal_verify";
 import InteractionCreateEvent from "./events/event_interaction_create";
 import ReadyEvent from "./events/event_ready";
 import Registry from "./objects/registry";
-import RobotEvent from "./objects/robotevent";
+import SkillsCommand from "./commands/command_skills";
 
 dotenv.config();
 
@@ -32,6 +32,7 @@ export const verification_registry = new Registry();
 verification_registry.register(new VerifyCommand);
 verification_registry.register(new NickCommand);
 verification_registry.register(new AwardsCommand);
+verification_registry.register(new SkillsCommand);
 verification_registry.register(new VerifyButton);
 verification_registry.register(new VerifyModal);
 verification_registry.register(new ReadyEvent);

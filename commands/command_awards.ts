@@ -53,9 +53,9 @@ export default class AwardsCommand extends VerificationCommand {
             .setTitle(`🏅 ${team_data.team_name}'s Awards 🏅`)
             .setDescription(`**${team_data.team_name} (${team_data.team_number})** had won a total of **${team_awards.length} awards**, below are the details of the awards and their events.\n\u200B`)
             .addFields(
-                ...team_awards_sorted.flatMap((award_data) => [
+                ...team_awards_sorted.map((award_data) => (
                     {name: `🎖️ ${award_data.award_name} x${award_data.award_events.length} 🎖️`, value: award_data.award_events.map((event_data, event_index) => `▪️ \`${event_data}\``).join("\n")}
-                ]))
+                )))
             .setColor("#84cc16");
         await command_interaction.editReply({embeds: [awards_embed]});
     }
