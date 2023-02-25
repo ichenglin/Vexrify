@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
 import VerificationCache from "./cache";
+import Logger from "./logger";
 
 export default class RobotEvent {
 
@@ -71,9 +72,8 @@ export default class RobotEvent {
         const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_SEASONSKILLS_${season_id}`);
         if (api_cache !== undefined) return api_cache
         // cache not exist
-        const api_response = (await Promise.all([
-            fetch(`https://www.robotevents.com/api/seasons/${season_id}/skills?grade_level=${encodeURI(grade_level)}`, {headers: this.get_authorization()}).then(response => response.json())
-        ]) as any[][]).filter(skill_data => skill_data.length > 0)[0];
+        const api_response = (await this.fetch_retries(`https://www.robotevents.com/api/seasons/${season_id}/skills?grade_level=${encodeURI(grade_level)}`, 5).then(response => response.json())) as any[];
+        //const api_response = (await fetch(`https://www.robotevents.com/api/seasons/${season_id}/skills?grade_level=${encodeURI(grade_level)}`, {headers: this.get_authorization()}).then(response => response.json())) as any[];
         const result = api_response.map(skill_data => ({
             skills_rank:           skill_data.rank,
             skills_entries:        api_response.length,
@@ -100,16 +100,27 @@ export default class RobotEvent {
     }
 
     private static async get_response(api_path: string): Promise<any[]> {
-        const api_response = await fetch(`https://www.robotevents.com/api/v2/${api_path}`, {headers: this.get_authorization()}).then(response => response.json()) as any;
+        const api_response = await this.fetch_retries(`https://www.robotevents.com/api/v2/${api_path}`, 5).then(response => response.json()) as any;
         if (api_response.data.length <= 0) return [];
         const api_data: any[] = api_response.data;
         const api_response_continued = await Promise.all(new Array(api_response.meta.last_page - 1).fill(0).map((zero_lol, page_index) => 
-            fetch(`https://www.robotevents.com/api/v2/${api_path}?page=${api_response.meta.last_page - page_index}`, {headers: this.get_authorization()}).then(response => response.json())
+            this.fetch_retries(`https://www.robotevents.com/api/v2/${api_path}?page=${api_response.meta.last_page - page_index}`, 5).then(response => response.json())
+            //fetch(`https://www.robotevents.com/api/v2/${api_path}?page=${api_response.meta.last_page - page_index}`, {headers: this.get_authorization()}).then(response => response.json())
         ));
         for (let page_index = 0; page_index < (api_response.meta.last_page - 1); page_index++) {
             api_data.push(...api_response_continued[page_index].data);
         }
         return api_data;
+    }
+
+    private static async fetch_retries(request_url: string, retry_amount: number): Promise<any> {
+        for (let attempt_index = 0; attempt_index < (retry_amount + 1); attempt_index++) {
+            try {
+                return await fetch(request_url, {headers: this.get_authorization()});
+            } catch (error) {
+                Logger.send_log(`Request to ${request_url} failed, attempt refetch #${attempt_index + 1}`);
+            }
+        }
     }
 
     private static get_authorization() {
