@@ -45,7 +45,7 @@ export default class SkillsCommand extends VerificationCommand {
         for (let skill_index = 0; skill_index < team_skills.length; skill_index++) {
             const skill_data = team_skills[skill_index];
             // if driver score and programming score is both 0, won't exist in season skill
-            if (skill_data.skill_score === 0) continue;
+            if (skill_data.skill_score === 0 || skill_data.skill_rank < 1) continue;
             // check season already exist
             if (team_season_data.filter(skill_season => skill_season.season_id === skill_data.skill_season.season_id).length > 0) continue;
             team_season_data.push(skill_data.skill_season);
