@@ -1,4 +1,4 @@
-import { BaseInteraction, ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
+import { BaseInteraction } from "discord.js";
 import { verification_registry } from "..";
 import Logger from "../objects/logger";
 import VerificationEvent from "../templates/template_event";

@@ -1,4 +1,4 @@
-import {Embed, EmbedBuilder, Guild, ModalSubmitInteraction } from "discord.js";
+import { EmbedBuilder, Guild, ModalSubmitInteraction } from "discord.js";
 import VerificationUser from "../interactions/user";
 import RobotEvent from "../objects/robotevent";
 import VerificationModal from "../templates/template_modal";

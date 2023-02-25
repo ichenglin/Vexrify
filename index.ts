@@ -42,8 +42,7 @@ verification_registry.register(new ReadyEvent);
 verification_registry.register(new InteractionCreateEvent);
 
 // rest
-const discord_rest = new REST({version: "10"});
-discord_rest.setToken(process.env.APPLICATION_TOKEN as string);
+const discord_rest = new REST({version: "10"}).setToken(process.env.APPLICATION_TOKEN as string);
 
 // client
 const discord_client = new Client({intents: [GatewayIntentBits.Guilds]});
