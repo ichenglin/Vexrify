@@ -57,7 +57,7 @@ export default class SkillsCommand extends VerificationCommand {
         const team_season_skills_sorted = team_season_data.map((season_data, season_index) => ({
             season_data:   season_data,
             season_skills: team_season_skills[season_index]
-        })).sort((season_skill_a, season_skill_b) => season_skill_b.season_data.season_id - season_skill_a.season_data.season_id);
+        })).filter(season_skill => season_skill.season_skills !== undefined).sort((season_skill_a, season_skill_b) => season_skill_b.season_data.season_id - season_skill_a.season_data.season_id);
         const skills_embed = new EmbedBuilder()
             .setTitle(`⚡ ${team_data.team_name}'s Skills ⚡`)
             .setDescription(`**${team_data.team_name} (${team_data.team_number})** had participated in **${team_season_skills_sorted.length} skill seasons**, below are the records of their driver and programming skills.\n\u200B`)
