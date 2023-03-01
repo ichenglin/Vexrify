@@ -9,7 +9,7 @@ export default class RobotEvent {
         const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_TEAMBYNUMBER_${team_number}`);
         if (api_cache !== undefined) return api_cache;
         // cache not exist
-        const api_response = await this.fetch_retries(`https://www.robotevents.com/api/v2/teams?number=${team_number}`, 5).then(response => response.json()) as any;
+        const api_response = await this.fetch_retries(`https://www.robotevents.com/api/v2/teams?number=${team_number}&per_page=1000`, 5).then(response => response.json()) as any;
         if (api_response.data.length <= 0) return undefined;
         const grade_priority = ["College", "High School", "Middle School", "Elementary School"];
         const api_team = api_response.data.sort((team_a: any, team_b: any) => grade_priority.indexOf(team_b.grade) - grade_priority.indexOf(team_a.grade))[api_response.data.length - 1];
@@ -31,7 +31,7 @@ export default class RobotEvent {
         const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_TEAMAWARDS_${team_id}`);
         if (api_cache !== undefined) return api_cache;
         // cache not exist
-        const result = (await this.get_response(`teams/${team_id}/awards`)).map((award_data: any) => ({
+        const result = (await this.get_response(`teams/${team_id}/awards?per_page=1000`)).map((award_data: any) => ({
             award_id:       award_data.id,
             award_name:     award_data.title.match(/^([^\(]+)\s\(/)[1],
             award_event: {
@@ -48,7 +48,7 @@ export default class RobotEvent {
         const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_TEAMSKILLS_${team_id}`);
         if (api_cache !== undefined) return api_cache;
         // cache not exist
-        const result = (await this.get_response(`teams/${team_id}/skills`)).map((skill_data: any) => ({
+        const result = (await this.get_response(`teams/${team_id}/skills?per_page=1000`)).map((skill_data: any) => ({
             skill_id:        skill_data.id,
             skill_type:      skill_data.type,
             skill_score:     skill_data.score,
