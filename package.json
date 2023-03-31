@@ -9,7 +9,7 @@
   "author": "Icheng Lin",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^14.7.1",
+    "discord.js": "^14.8.0",
     "dotenv": "^16.0.3",
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.9",
