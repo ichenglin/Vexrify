@@ -73,6 +73,7 @@ export default class RobotEvent {
         if (api_cache !== undefined) return api_cache
         // cache not exist
         const api_response = (await this.fetch_retries(`https://www.robotevents.com/api/seasons/${season_id}/skills?grade_level=${encodeURI(grade_level)}`, 5).then(response => response.json())) as any[];
+        if ((api_response as any).message !== undefined) return [];
         const result = api_response.map(skill_data => ({
             skills_rank:           skill_data.rank,
             skills_entries:        api_response.length,
