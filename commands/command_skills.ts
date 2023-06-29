@@ -1,4 +1,5 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { AttachmentBuilder, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import * as NodeChartJS from "chartjs-node-canvas";
 import RobotEvent, { SeasonData } from "../objects/robotevent";
 import VerificationCommand from "../templates/template_command";
 
@@ -69,7 +70,44 @@ export default class SkillsCommand extends VerificationCommand {
                         `▪️ Programming: \`${skill_data.season_skills.skills_score.programming_score}\``
                     ].join("\n")}
                 )))
+            .setImage("attachment://skills_graph.png")
             .setColor("#84cc16");
-        await command_interaction.editReply({embeds: [skills_embed]});
+        // skills graph
+        const skills_canvas = new NodeChartJS.ChartJSNodeCanvas({width: 960, height: 540});
+        const skills_buffer = await skills_canvas.renderToBuffer({type: "line", data: {
+            labels: [...team_season_skills_sorted].reverse().map((skill_data) => (skill_data.season_data.season_name.match(/^VRC (\d{4}-\d{4}):/) as RegExpMatchArray)[1]),
+            datasets: [{
+                label:           "Driver Score",
+                data:            [...team_season_skills_sorted].reverse().map((skill_data) => skill_data.season_skills.skills_score.driver_score),
+                fill:            true,
+                borderWidth:     6,
+                borderColor:     "rgb(255, 99, 132)",
+                backgroundColor: "rgba(255, 99, 132, 0.2)",
+                tension:         0.4
+            },{
+                label:           "Programming Score",
+                data:            [...team_season_skills_sorted].reverse().map((skill_data) => skill_data.season_skills.skills_score.programming_score),
+                fill:            true,
+                borderWidth:     6,
+                borderColor:     "rgb(54, 162, 235)",
+                backgroundColor: "rgba(54, 162, 235, 0.2)",
+                tension:         0.4
+            }]
+        }, options: {plugins: {
+            title: {
+                display: true,
+                text:    `${team_data.team_name}'s Season Scores`,
+                color:   "white",
+                font:    {size: 20, weight: "800"}
+            },
+            legend: {
+                labels: {color: "white", font: {size: 20, weight: "800"}}
+            }
+        }, scales: {
+            x: {ticks: {color: "white", font: {size: 20, weight: "800"}}} as any,
+            y: {ticks: {color: "white", font: {size: 20, weight: "800"}}} as any
+        }}});
+        const skills_image = new AttachmentBuilder(skills_buffer, {name: "skills_graph.png"});
+        await command_interaction.editReply({embeds: [skills_embed], files: [skills_image]});
     }
 }

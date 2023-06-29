@@ -9,6 +9,8 @@
   "author": "Icheng Lin",
   "license": "MIT",
   "dependencies": {
+    "chart.js": "^3.9.1",
+    "chartjs-node-canvas": "^4.1.6",
     "discord.js": "^14.8.0",
     "dotenv": "^16.0.3",
     "mysql": "^2.18.1",
