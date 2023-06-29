@@ -75,7 +75,7 @@ export default class SkillsCommand extends VerificationCommand {
         // skills graph
         const skills_canvas = new NodeChartJS.ChartJSNodeCanvas({width: 960, height: 540});
         const skills_buffer = await skills_canvas.renderToBuffer({type: "line", data: {
-            labels: [...team_season_skills_sorted].reverse().map((skill_data) => (skill_data.season_data.season_name.match(/^VRC (\d{4}-\d{4}):/) as RegExpMatchArray)[1]),
+            labels: [...team_season_skills_sorted].reverse().map((skill_data) => (skill_data.season_data.season_name.match(/^[^ ]+ (\d{4}-\d{4}):/) as RegExpMatchArray)[1]),
             datasets: [{
                 label:           "Driver Score",
                 data:            [...team_season_skills_sorted].reverse().map((skill_data) => skill_data.season_skills.skills_score.driver_score),
