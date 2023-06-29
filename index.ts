@@ -14,6 +14,7 @@ import ReadyEvent from "./events/event_ready";
 import Registry from "./objects/registry";
 import SkillsCommand from "./commands/command_skills";
 import HelpButton from "./commands/button_help";
+import Prefetch from "./objects/prefetch";
 
 dotenv.config();
 
@@ -63,4 +64,6 @@ verification_cache.on("error", error => Logger.send_log("Cache login error."));
             type: ActivityType.Playing,
         }]
     });
+    // cancelled prefetch due to database spam
+    // await Prefetch.prefetch_update();
 })();
