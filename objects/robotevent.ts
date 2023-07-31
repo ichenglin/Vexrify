@@ -7,7 +7,7 @@ export default class RobotEvent {
     public static async get_team_by_number(team_number: string): Promise<TeamData | undefined> {
         // load cache
         const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_TEAMBYNUMBER_${team_number}`);
-        if (api_cache !== undefined) return api_cache;
+        if (api_cache !== undefined) return api_cache.cache_data;
         // cache not exist
         const api_response = await this.fetch_retries(`https://www.robotevents.com/api/v2/teams?number=${team_number}&per_page=1000`, 5).then(response => response.json()) as any;
         if (api_response.data.length <= 0) return undefined;
@@ -29,7 +29,7 @@ export default class RobotEvent {
     public static async get_team_awards(team_id: number): Promise<TeamAward[]> {
         // load cache
         const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_TEAMAWARDS_${team_id}`);
-        if (api_cache !== undefined) return api_cache;
+        if (api_cache !== undefined) return api_cache.cache_data;
         // cache not exist
         const result = (await this.get_response(`teams/${team_id}/awards?per_page=1000`)).map((award_data: any) => ({
             award_id:       award_data.id,
@@ -46,7 +46,7 @@ export default class RobotEvent {
     public static async get_team_skills(team_id: number): Promise<TeamSkills[]> {
         // load cache
         const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_TEAMSKILLS_${team_id}`);
-        if (api_cache !== undefined) return api_cache;
+        if (api_cache !== undefined) return api_cache.cache_data;
         // cache not exist
         const result = (await this.get_response(`teams/${team_id}/skills?per_page=1000`)).map((skill_data: any) => ({
             skill_id:        skill_data.id,
@@ -70,7 +70,7 @@ export default class RobotEvent {
     public static async get_season_skills(season_id: number, grade_level: string): Promise<SeasonSkills[]> {
         // load cache
         const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_SEASONSKILLS_${season_id}`);
-        if (api_cache !== undefined) return api_cache
+        if (api_cache !== undefined) return api_cache.cache_data;
         // cache not exist
         const api_response = (await this.fetch_retries(`https://www.robotevents.com/api/seasons/${season_id}/skills?grade_level=${encodeURI(grade_level)}`, 5).then(response => response.json())) as any[];
         if ((api_response as any).message !== undefined) return [];

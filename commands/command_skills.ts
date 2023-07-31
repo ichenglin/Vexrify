@@ -72,6 +72,8 @@ export default class SkillsCommand extends VerificationCommand {
                     ].join("\n")}
                 )))
             .setImage("attachment://skills_graph.png")
+            .setTimestamp()
+            .setFooter({text: `requested by ${command_interaction.user.tag}`, iconURL: command_interaction.client.user.displayAvatarURL()})
             .setColor("#84cc16");
         // process data points
         let skills_data   = [...team_season_skills_sorted].reverse();

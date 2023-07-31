@@ -58,6 +58,8 @@ export default class AwardsCommand extends VerificationCommand {
                     if (award_events.length > 1024) award_events = `${award_events.slice(0, 1024 - 4)}\`...`;
                     return {name: `🎖️ ${award_data.award_name} x${award_data.award_events.length} 🎖️`, value: award_events};
                 }))
+            .setTimestamp()
+            .setFooter({text: `requested by ${command_interaction.user.tag}`, iconURL: command_interaction.client.user.displayAvatarURL()})
             .setColor("#84cc16");
         await command_interaction.editReply({embeds: [awards_embed]});
     }
