@@ -72,30 +72,77 @@ export default class RobotEvent {
         const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_SEASONSKILLS_${season_id}`);
         if (api_cache !== undefined) return api_cache.cache_data;
         // cache not exist
-        const api_response = (await this.fetch_retries(`https://www.robotevents.com/api/seasons/${season_id}/skills?grade_level=${encodeURI(grade_level)}`, 5).then(response => response.json())) as any[];
+        const api_response = (await this.fetch_retries(`https://www.robotevents.com/api/seasons/${season_id}/skills?grade_level=${grade_level}`, 5).then(response => response.json())) as any[];
         if ((api_response as any).message !== undefined) return [];
         const result = api_response.map(skill_data => ({
-            skills_rank:           skill_data.rank,
-            skills_entries:        api_response.length,
+            skills_rank:                skill_data.rank,
+            skills_entries:             api_response.length,
             skills_team: {
-                team_id:           skill_data.team.id,
-                team_number:       skill_data.team.team,
-                team_name:         skill_data.team.teamName,
-                team_organization: skill_data.team.organization,
-                team_country:      skill_data.team.country,
-                team_program:      skill_data.team.program,
-                team_grade:        skill_data.team.gradeLevel
+                team_id:                skill_data.team.id,
+                team_number:            skill_data.team.team,
+                team_name:              skill_data.team.teamName,
+                team_organization:      skill_data.team.organization,
+                team_country:           skill_data.team.country,
+                team_program:           skill_data.team.program,
+                team_grade:             skill_data.team.gradeLevel
             },
             skills_score: {
-                driver_score: skill_data.scores.driver,
-                driver_time_stop: skill_data.scores.driverStopTime,
-                driver_score_date: skill_data.scores.driverScoredAt,
-                programming_score: skill_data.scores.programming,
-                programming_time_stop: skill_data.scores.progStopTime,
+                driver_score:           skill_data.scores.driver,
+                driver_time_stop:       skill_data.scores.driverStopTime,
+                driver_score_date:      skill_data.scores.driverScoredAt,
+                programming_score:      skill_data.scores.programming,
+                programming_time_stop:  skill_data.scores.progStopTime,
                 programming_score_date: skill_data.scores.progScoredAt,
             }
         } as SeasonSkills));
         await VerificationCache.cache_set(`ROBOTEVENT_SEASONSKILLS_${season_id}`, result);
+        return result;
+    }
+
+    public static async get_event_teams(event_id: number): Promise<TeamData[]> {
+        // load cache
+        const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_EVENTTEAMS_${event_id}`);
+        if (api_cache !== undefined) return api_cache.cache_data;
+        // cache not exist
+        const result = (await this.get_response(`events/${event_id}/teams?per_page=1000`)).map((team_data: any) => ({
+            team_id:           team_data.id,
+            team_number:       team_data.number,
+            team_name:         team_data.team_name,
+            team_organization: team_data.organization,
+            team_country:      (team_data.location === undefined) || (team_data.location.country),
+            team_program:      (team_data.program  === undefined) || (team_data.program.name),
+            team_grade:        team_data.grade
+        } as TeamData));
+        await VerificationCache.cache_set(`ROBOTEVENT_EVENTTEAMS_${event_id}`, result);
+        return result;
+    }
+
+    public static async get_guild_events(guild_id: string, team_ids: number[], event_after: Date): Promise<EventData[]> {
+        // load cache
+        const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_GUILDEVENTS_${guild_id}`);
+        if (api_cache !== undefined) return api_cache.cache_data;
+        // cache not exist
+        const result = (await this.get_response(`events?${team_ids.map(team_id => `team[]=${team_id}`).join("&")}&start=${event_after.toISOString()}&per_page=1000`)).map((event_data: any) => ({
+            event_id:             event_data.id,
+            event_sku:            event_data.sku,
+            event_name:           event_data.name,
+            event_date: {
+                date_begin:       event_data.start,
+                date_end:         event_data.end
+            },
+            event_program: {
+                program_id:       event_data.program.id,
+                program_name:     event_data.program.name
+            },
+            event_location: {
+                address_lines:    [event_data.location.address_1, event_data.location.address_2].filter(address_line => address_line != null),
+                address_city:     event_data.location.city,
+                address_state:    event_data.location.region,
+                address_postcode: event_data.location.postcode,
+                address_country:  event_data.location.country,
+            }
+        } as EventData));
+        await VerificationCache.cache_set(`ROBOTEVENT_GUILDEVENTS_${guild_id}`, result);
         return result;
     }
 
@@ -115,7 +162,7 @@ export default class RobotEvent {
     private static async fetch_retries(request_url: string, retry_amount: number): Promise<any> {
         for (let attempt_index = 0; attempt_index < (retry_amount + 1); attempt_index++) {
             try {
-                return await fetch(request_url, {headers: this.get_authorization()});
+                return await fetch(encodeURI(request_url), {headers: this.get_authorization()});
             } catch (error) {
                 Logger.send_log(`Request to ${request_url} failed, attempt refetch #${attempt_index + 1}`);
             }
@@ -141,9 +188,24 @@ export interface TeamData {
     team_grade:        string
 }
 
-export interface EventData {
+export interface EventDataSimplified {
     event_id:   number,
     event_name: string
+}
+
+export interface EventData {
+    event_id:         number,
+    event_sku:        string,
+    event_name:       string,
+    event_date: {
+        date_begin:   string,
+        date_end:     string
+    },
+    event_program: {
+        program_id:   number,
+        program_name: string
+    },
+    event_location:   LocationData
 }
 
 export interface SeasonData {
@@ -151,10 +213,18 @@ export interface SeasonData {
     season_name: string
 }
 
+export interface LocationData {
+    address_lines:    string[],
+    address_city:     string,
+    address_state:    string,
+    address_postcode: string,
+    address_country:  string,
+}
+
 export interface TeamAward {
     award_id:       number,
     award_name:     string,
-    award_event:    EventData
+    award_event:    EventDataSimplified
 }
 
 export interface TeamSkills {
@@ -163,7 +233,7 @@ export interface TeamSkills {
     skill_score:     number,
     skill_rank:      number,
     skill_attempts:  number,
-    skill_event:     EventData,
+    skill_event:     EventDataSimplified,
     skill_season:    SeasonData
 }
 
