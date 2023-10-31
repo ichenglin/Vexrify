@@ -11,13 +11,6 @@ export default class UpcomingCommand extends VerificationCommand {
             .setName("upcoming")
             .setDescription("Retrieves all the upcoming events of the teams in guild.")
             .setDMPermission(false);
-        command_builder.addStringOption(option => option
-            .setName("team")
-            .setDescription("(Optional) Filter by the number of the team.")
-            .setMaxLength(8)
-            .setMinLength(2)
-            .setRequired(false)
-        );
         return command_builder;
     }
 
@@ -43,7 +36,7 @@ export default class UpcomingCommand extends VerificationCommand {
         // embed
         const events_embed = new EmbedBuilder()
             .setTitle(`🗓️ ${command_interaction.guild?.name}'s Upcoming Events 🗓️`)
-            .setDescription(`**${command_interaction.guild?.name}** had a total of **${guild_events_total} registered events**, below are the details of their **${guild_events_maximum} upcoming events**.\n\u200B`)
+            .setDescription(`**${command_interaction.guild?.name}** had a total of **${guild_events_total} registered events**, below are the details of their **${Math.min(guild_events_total, guild_events_maximum)} upcoming events**.\n\u200B`)
             .addFields(
                 ...guild_events.map((event_data, event_index) => {
                     const event_location = [
