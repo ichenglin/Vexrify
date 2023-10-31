@@ -52,7 +52,7 @@ export default class UpcomingCommand extends VerificationCommand {
                             `<:vrc_dot_blue:1135437387619639316> Address: ${CountryFlag.get_flag(event_data.event_location.address_country)} \`${event_location}\``,
                             `<:vrc_dot_blue:1135437387619639316> Date: <t:${Math.floor(new Date(event_data.event_date.date_begin).getTime() / 1000)}:R>`,
                             `<:vrc_dot_blue:1135437387619639316> Teams: \`${event_teams_guild.map(team_data => team_data.team_number).join("\`, \`")}\` and \`${event_teams_excluded}\` more team(s)...`,
-                            `<:vrc_dot_blue:1135437387619639316> Links: [**\`Robot Event\`**](https://www.robotevents.com/robot-competitions/vex-robotics-competition/${event_data.event_sku}.html)`,
+                            `<:vrc_dot_blue:1135437387619639316> Links: [**\`Robot Events\`**](https://www.robotevents.com/robot-competitions/vex-robotics-competition/${event_data.event_sku}.html)`,
                         ].join("\n")
                     }
                 }))
