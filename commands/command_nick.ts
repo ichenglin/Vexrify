@@ -28,7 +28,7 @@ export default class NickCommand extends VerificationCommand {
                 .setTitle("⛔ Verification Required ⛔")
                 .setDescription("**You are not verified!** If you believe this is in error, please contact an administrator.")
                 .setColor("#ef4444");
-            await command_interaction.editReply({embeds: [permission_embed],});
+            await command_interaction.editReply({embeds: [permission_embed]});
             return;
         }
         const user_nick = command_interaction.options.getString("name", true);
@@ -38,7 +38,7 @@ export default class NickCommand extends VerificationCommand {
                 .setTitle("⛔ Prohibited Nickname ⛔")
                 .setDescription("You are only allowed to use **letters**, **numbers**, and **whitespaces** in your nickname!")
                 .setColor("#ef4444");
-            await command_interaction.editReply({embeds: [invalid_embed],});
+            await command_interaction.editReply({embeds: [invalid_embed]});
             return;
         }
         user_data.user_name = user_nick;

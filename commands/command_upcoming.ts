@@ -39,20 +39,33 @@ export default class UpcomingCommand extends VerificationCommand {
             .setDescription(`**${command_interaction.guild?.name}** had a total of **${guild_events_total} registered events**, below are the details of their **${Math.min(guild_events_total, guild_events_maximum)} upcoming events**.\n\u200B`)
             .addFields(
                 ...guild_events.map((event_data, event_index) => {
-                    const event_location = [
+                    const event_address = [
+                        ...event_data.event_location.address_lines,
+                        event_data.event_location.address_city,
+                        event_data.event_location.address_state,
+                        `${event_data.event_location.address_country} ${event_data.event_location.address_postcode}`
+                    ].filter(address_component => address_component != null && address_component.length > 0).join(", ");
+                    const event_region = [
                         event_data.event_location.address_city,
                         event_data.event_location.address_state,
                         event_data.event_location.address_country
-                    ].filter(address_component => address_component != null).join(", ");
+                    ].filter(address_component => address_component != null && address_component.length > 0).join(", ");
                     const event_teams_guild    = guild_events_teams[event_index].filter(team_data => guild_registered_teams[team_data.team_id] !== undefined);
                     const event_teams_excluded = guild_events_teams[event_index].length - event_teams_guild.length;
+                    const event_links          = [{
+                        link_name: "Robot Events",
+                        link_url:  `https://www.robotevents.com/robot-competitions/vex-robotics-competition/${event_data.event_sku}.html`
+                    }, {
+                        link_name: "Google Maps",
+                        link_url:  `https://www.google.com/maps/search/?api=1&query=${encodeURI(event_address)}`
+                    }];
                     return {
                         name: `📌 ${event_data.event_name} 📌`,
                         value: [
-                            `<:vrc_dot_blue:1135437387619639316> Address: ${CountryFlag.get_flag(event_data.event_location.address_country)} \`${event_location}\``,
+                            `<:vrc_dot_blue:1135437387619639316> Location: ${CountryFlag.get_flag(event_data.event_location.address_country)} \`${event_region}\``,
                             `<:vrc_dot_blue:1135437387619639316> Date: <t:${Math.floor(new Date(event_data.event_date.date_begin).getTime() / 1000)}:R>`,
                             `<:vrc_dot_blue:1135437387619639316> Teams: \`${event_teams_guild.map(team_data => team_data.team_number).join("\`, \`")}\` and \`${event_teams_excluded}\` more team(s)...`,
-                            `<:vrc_dot_blue:1135437387619639316> Links: [**\`Robot Events\`**](https://www.robotevents.com/robot-competitions/vex-robotics-competition/${event_data.event_sku}.html)`,
+                            `<:vrc_dot_blue:1135437387619639316> Links: ${event_links.map(link_data => `[**\`${link_data.link_name}\`**](${link_data.link_url})`).join(", ")}`,
                         ].join("\n")
                     }
                 }))
