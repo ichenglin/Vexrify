@@ -35,6 +35,14 @@ export default class VerifyModal extends VerificationModal {
             await modal_interaction.editReply({embeds: [invalid_embed],});
             return;
         }
+        // save to database
+        await VerificationUser.data_add({
+            user_id:          modal_interaction.user.id,
+            guild_id:         modal_interaction.guild?.id as string,
+            user_team_id:     team_data.team_id,
+            user_team_number: form_team_number,
+            user_name:        form_user_name
+        });
         // successful reply
         const verified_embed = new EmbedBuilder()
             .setTitle("✅ Verification Request Accepted ✅")
@@ -50,17 +58,8 @@ export default class VerifyModal extends VerificationModal {
             .setTitle("⚠️ No Permission ⚠️")
             .setDescription(`The verification bot **couldn't edit the guild owner's nickname** due to Discord restrictions, please update your nickname manually. **(Do not report this as a bug)**`)
             .setColor("#f97316");
-        await VerificationUser.username_set(modal_interaction.guild as Guild, modal_interaction.user, `${form_user_name} | ${team_data.team_number}`)
+        await VerificationUser.username_set(modal_interaction.guild as Guild, modal_interaction.user, `${form_user_name} | ${team_data.team_number}`);
         await VerificationUser.role_add(modal_interaction.guild as Guild, "Verified", modal_interaction.user);
         await modal_interaction.editReply({embeds: (!permission_owner ? [verified_embed] : [verified_embed, permission_embed])});
-        // save to database
-        await VerificationUser.data_add({
-            user_id:          modal_interaction.user.id,
-            guild_id:         modal_interaction.guild?.id as string,
-            user_team_id:     team_data.team_id,
-            user_team_number: form_team_number,
-            user_name:        form_user_name
-        });
     }
-
 }

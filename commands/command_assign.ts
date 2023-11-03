@@ -77,15 +77,18 @@ export default class AssignCommand extends VerificationCommand {
             await command_interaction.editReply({embeds: [permission_embed]});
             return;
         }
+        const new_team_id     = (updated_team) ? team_data?.team_id     as number : user_data.user_team_id;
+        const new_team_number = (updated_team) ? team_data?.team_number as string : user_data.user_team_number;
+        const new_name        = (updated_name) ? assign_name                      : user_data.user_name;
         // save to database
         await VerificationUser.data_add({
             user_id:          assign_user.id,
             guild_id:         command_interaction.guild?.id as string,
-            user_team_id:     (updated_team) ? (team_data?.team_id     as number) : user_data.user_team_id,
-            user_team_number: (updated_team) ? (team_data?.team_number as string) : user_data.user_team_number,
-            user_name:        (updated_name) ? assign_name                        : user_data.user_name
+            user_team_id:     new_team_id,
+            user_team_number: new_team_number,
+            user_name:        new_name
         });
-        // embed
+        // successful reply
         const assign_embed = new EmbedBuilder()
             .setTitle("✅ User Updated ✅")
             .setDescription(`<@${command_interaction.user.id}> updated <@${assign_user.id}>'s verification status.\n\u200B`)
@@ -108,6 +111,7 @@ export default class AssignCommand extends VerificationCommand {
             .setTitle("⚠️ No Permission ⚠️")
             .setDescription(`The verification bot **couldn't edit the guild owner's nickname** due to Discord restrictions, please update their nickname manually.`)
             .setColor("#f97316");
+        await VerificationUser.username_set(command_interaction.guild as Guild, assign_user, `${new_name} | ${new_team_number}`);
         await command_interaction.editReply({embeds: (!permission_owner ? [assign_embed] : [assign_embed, permission_embed])});
     }
 
