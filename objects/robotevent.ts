@@ -5,6 +5,8 @@ import Logger from "./logger";
 export default class RobotEvent {
 
     public static async get_team_by_number(team_number: string): Promise<TeamData | undefined> {
+        // prohibited characters in team number
+        if (team_number.match(/[^\w\d]/g) !== null) return undefined;
         // load cache
         const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_TEAMBYNUMBER_${team_number}`);
         if (api_cache !== undefined) return api_cache.cache_data;

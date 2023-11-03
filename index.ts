@@ -16,6 +16,7 @@ import SkillsCommand from "./commands/command_skills";
 import HelpButton from "./commands/button_help";
 import RosterCommand from "./commands/command_roster";
 import UpcomingCommand from "./commands/command_upcoming";
+import AssignCommand from "./commands/command_assign";
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ verification_registry.register(new AwardsCommand);
 verification_registry.register(new SkillsCommand);
 verification_registry.register(new RosterCommand);
 verification_registry.register(new UpcomingCommand);
+verification_registry.register(new AssignCommand);
 verification_registry.register(new VerifyButton);
 verification_registry.register(new HelpButton);
 verification_registry.register(new VerifyModal);

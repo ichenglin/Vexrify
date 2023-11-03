@@ -15,15 +15,6 @@ export default class VerifyModal extends VerificationModal {
         await modal_interaction.deferReply({ephemeral: true});
         const form_team_number = modal_interaction.fields.getTextInputValue("application_team");
         const form_user_name   = modal_interaction.fields.getTextInputValue("application_nick");
-        // prohibited characters in team number
-        if (form_team_number.match(/[^\w\d]/g) !== null) {
-            const invalid_embed = new EmbedBuilder()
-                .setTitle("⛔ Prohibited Team ID ⛔")
-                .setDescription("You are only allowed to use **letters** and **numbers** in team ID!")
-                .setColor("#ef4444");
-            await modal_interaction.editReply({embeds: [invalid_embed],});
-            return;
-        }
         // check for valid team id
         const team_data = await RobotEvent.get_team_by_number(form_team_number);
         if (team_data === undefined) {
