@@ -33,18 +33,6 @@ export default class PingCommand extends VerificationCommand {
             await command_interaction.editReply({embeds: [permission_embed]});
             return;
         }
-        // cooldown
-        const cooldown_key   = `FRONTEND_PINGCOOLDOWN_${command_interaction.guild?.id}_${command_interaction.user.id}`;
-        const cooldown_cache = await VerificationCache.cache_get(cooldown_key);
-        if (cooldown_cache !== undefined) {
-            // cooldown active
-            const cooldown_embed = new EmbedBuilder()
-                .setTitle("⛔ Command on Cooldown ⛔")
-                .setDescription(`This command has a **cooldown of 1 minute** to avoid spams, please try again later.`)
-                .setColor("#ef4444");
-            await command_interaction.editReply({embeds: [cooldown_embed]});
-            return;
-        }
         const guild_teams      = await VerificationGuild.teams_get(command_interaction.guild?.id as string);
         const ping_team_number = command_interaction.options.getString("team")?.toUpperCase();
         const ping_team_data   = guild_teams.find(loop_team => loop_team.team_number === ping_team_number);
@@ -55,6 +43,18 @@ export default class PingCommand extends VerificationCommand {
                 .setDescription(`The team (${ping_team_number}) is either **invalid** or **not in the server**! If you believe this is in error, please contact an administrator.`)
                 .setColor("#ef4444");
             await command_interaction.editReply({embeds: [invalid_embed]});
+            return;
+        }
+        // cooldown
+        const cooldown_key   = `FRONTEND_PINGCOOLDOWN_${command_interaction.guild?.id}_${command_interaction.user.id}`;
+        const cooldown_cache = await VerificationCache.cache_get(cooldown_key);
+        if (cooldown_cache !== undefined) {
+            // cooldown active
+            const cooldown_embed = new EmbedBuilder()
+                .setTitle("⛔ Command on Cooldown ⛔")
+                .setDescription(`This command has a **cooldown of 1 minute** to avoid spams, please try again later.`)
+                .setColor("#ef4444");
+            await command_interaction.editReply({embeds: [cooldown_embed]});
             return;
         }
         // ping embed
