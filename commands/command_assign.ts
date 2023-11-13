@@ -11,7 +11,7 @@ export default class AssignCommand extends VerificationCommand {
             .setName("assign")
             .setDescription("Forcefully assign/replace the team number of an user.")
             .setDMPermission(false)
-            .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
+            .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers | PermissionFlagsBits.BanMembers);
         command_builder.addUserOption(option => option
             .setName("user")
             .setDescription("The user to assign the team number.")

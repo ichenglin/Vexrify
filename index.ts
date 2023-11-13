@@ -17,6 +17,7 @@ import HelpButton from "./commands/button_help";
 import RosterCommand from "./commands/command_roster";
 import UpcomingCommand from "./commands/command_upcoming";
 import AssignCommand from "./commands/command_assign";
+import PingCommand from "./commands/command_ping";
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ export const verification_cache = createClient({password: process.env.REDIS_PASS
 export const verification_registry = new Registry();
 verification_registry.register(new VerifyCommand);
 verification_registry.register(new NickCommand);
+verification_registry.register(new PingCommand);
 verification_registry.register(new AwardsCommand);
 verification_registry.register(new SkillsCommand);
 verification_registry.register(new RosterCommand);
