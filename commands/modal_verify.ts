@@ -59,12 +59,7 @@ export default class VerifyModal extends VerificationModal {
             .setTitle("⚠️ No Permission ⚠️")
             .setDescription(`The verification bot **couldn't edit the guild owner's nickname** due to Discord restrictions, please update your nickname manually. **(Do not report this as a bug)**`)
             .setColor("#f97316");
-        await VerificationUser.username_set(modal_interaction.guild as Guild, modal_interaction.user, `${form_user_name} | ${team_data.team_number}`);
-        await VerificationUser.role_add(modal_interaction.guild as Guild, "Verified", modal_interaction.user);
-        await modal_interaction.editReply({embeds: (!permission_owner ? [verified_embed] : [verified_embed, permission_embed])});
-        // send welcome message
-        const guild_channel_system = modal_interaction.guild?.systemChannel;
-        if (guild_channel_system === null || guild_channel_system === undefined) return;
+        // welcome message
         const welcome_image = [
             "https://media.tenor.com/0pw26WpuuEsAAAAC/himouto-umaruchan-umaru.gif",
             "https://media.tenor.com/GyFbT8ZoyqAAAAAC/kanokari-anime-fall.gif"
@@ -81,7 +76,12 @@ export default class VerifyModal extends VerificationModal {
                 ].join("\n")
             })
             .setImage(welcome_image[Math.floor(Math.random() * welcome_image.length)])
-            .setColor("#84cc16");
-        modal_interaction.guild?.systemChannel?.send({embeds: [welcome_embed]});
+            .setColor("#E879F9");
+        await VerificationUser.username_set(modal_interaction.guild as Guild, modal_interaction.user, `${form_user_name} | ${team_data.team_number}`);
+        await VerificationUser.role_add(modal_interaction.guild as Guild, "Verified", modal_interaction.user);
+        await modal_interaction.editReply({embeds: (!permission_owner ? [verified_embed] : [verified_embed, permission_embed])});
+        const guild_channel_system = modal_interaction.guild?.systemChannel;
+        if (guild_channel_system === null || guild_channel_system === undefined) return;
+        guild_channel_system.send({embeds: [welcome_embed]});
     }
 }
