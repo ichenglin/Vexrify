@@ -66,9 +66,9 @@ export default class VerifyModal extends VerificationModal {
         ];
         const welcome_embed = new EmbedBuilder()
             .setTitle(`🎉 Welcome ${form_user_name} to ${modal_interaction.guild?.name} 🎉`)
-            .setDescription(`<@${modal_interaction.user.id}> had verified as team **${team_data.team_name}** (**${team_data.team_number}**).`)
+            .setDescription(`<@${modal_interaction.user.id}> had verified as team **${team_data.team_number}**.\n\u200B`)
             .addFields({
-                name: `\u200B`,
+                name: team_data.team_name,
                 value: [
                     `<:vrc_dot_blue:1135437387619639316> Organization: \`${team_data.team_organization}\``,
                     `<:vrc_dot_blue:1135437387619639316> Country: ${CountryFlag.get_flag(team_data.team_country)} \`${team_data.team_country}\``,
