@@ -2,6 +2,7 @@ import { EmbedBuilder, Guild, ModalSubmitInteraction } from "discord.js";
 import VerificationUser from "../interactions/user";
 import RobotEvent from "../objects/robotevent";
 import VerificationModal from "../templates/template_modal";
+import CountryFlag from "../utilities/flag";
 
 export default class VerifyModal extends VerificationModal {
 
@@ -13,7 +14,7 @@ export default class VerifyModal extends VerificationModal {
 
     public async modal_trigger(modal_interaction: ModalSubmitInteraction): Promise<void> {
         await modal_interaction.deferReply({ephemeral: true});
-        const form_team_number = modal_interaction.fields.getTextInputValue("application_team");
+        const form_team_number = modal_interaction.fields.getTextInputValue("application_team").toUpperCase();
         const form_user_name   = modal_interaction.fields.getTextInputValue("application_nick");
         // check for valid team id
         const team_data = await RobotEvent.get_team_by_number(form_team_number);
@@ -58,8 +59,29 @@ export default class VerifyModal extends VerificationModal {
             .setTitle("⚠️ No Permission ⚠️")
             .setDescription(`The verification bot **couldn't edit the guild owner's nickname** due to Discord restrictions, please update your nickname manually. **(Do not report this as a bug)**`)
             .setColor("#f97316");
+        // welcome message
+        const welcome_image = [
+            "https://media.tenor.com/0pw26WpuuEsAAAAC/himouto-umaruchan-umaru.gif",
+            "https://media.tenor.com/GyFbT8ZoyqAAAAAC/kanokari-anime-fall.gif"
+        ];
+        const welcome_embed = new EmbedBuilder()
+            .setTitle(`🎉 Welcome ${form_user_name} to ${modal_interaction.guild?.name} 🎉`)
+            .setDescription(`<@${modal_interaction.user.id}> had verified as team **${team_data.team_number}**.\n\u200B`)
+            .addFields({
+                name: team_data.team_name,
+                value: [
+                    `<:vrc_dot_blue:1135437387619639316> Organization: \`${team_data.team_organization}\``,
+                    `<:vrc_dot_blue:1135437387619639316> Country: ${CountryFlag.get_flag(team_data.team_country)} \`${team_data.team_country}\``,
+                    `<:vrc_dot_blue:1135437387619639316> Grade: \`${team_data.team_grade}\``
+                ].join("\n")
+            })
+            .setImage(welcome_image[Math.floor(Math.random() * welcome_image.length)])
+            .setColor("#E879F9");
         await VerificationUser.username_set(modal_interaction.guild as Guild, modal_interaction.user, `${form_user_name} | ${team_data.team_number}`);
         await VerificationUser.role_add(modal_interaction.guild as Guild, "Verified", modal_interaction.user);
         await modal_interaction.editReply({embeds: (!permission_owner ? [verified_embed] : [verified_embed, permission_embed])});
+        const guild_channel_system = modal_interaction.guild?.systemChannel;
+        if (guild_channel_system === null || guild_channel_system === undefined) return;
+        guild_channel_system.send({embeds: [welcome_embed]});
     }
 }
