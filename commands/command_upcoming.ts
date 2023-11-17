@@ -66,6 +66,7 @@ export default class UpcomingCommand extends VerificationCommand {
                             `<:vrc_dot_blue:1135437387619639316> Date: <t:${Math.floor(new Date(event_data.event_date.date_begin).getTime() / 1000)}:R>`,
                             `<:vrc_dot_blue:1135437387619639316> Teams: \`${event_teams_guild.map(team_data => team_data.team_number).join("\`, \`")}\` and \`${event_teams_excluded}\` more team(s)...`,
                             `<:vrc_dot_blue:1135437387619639316> Links: ${event_links.map(link_data => `[**\`${link_data.link_name}\`**](${link_data.link_url})`).join(", ")}`,
+                            `\u200B`
                         ].join("\n")
                     }
                 }))
