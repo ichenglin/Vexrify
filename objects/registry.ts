@@ -18,11 +18,14 @@ export default class Registry {
         this.registered_modals   = new Map<string, VerificationModal>();
     }
 
-    public register(content: VerificationEvent | VerificationCommand | VerificationButton | VerificationModal): void {
-        if      (content instanceof VerificationEvent)   this.registered_events.set(content.event_configuration().name, content);
-        else if (content instanceof VerificationCommand) this.registered_commands.set(content.command_configuration().toJSON().name, content);
-        else if (content instanceof VerificationButton)  this.registered_buttons.set(content.button_configuration().button_id, content);
-        else if (content instanceof VerificationModal)   this.registered_modals.set(content.modal_configuration().modal_id, content);
+    public register(contents: (VerificationEvent | VerificationCommand | VerificationButton | VerificationModal)[]): void {
+        for (let content_index = 0; content_index < contents.length; content_index++) {
+            const loop_content = contents[content_index];
+            if      (loop_content instanceof VerificationEvent)   this.registered_events.set(loop_content.event_configuration().name, loop_content);
+            else if (loop_content instanceof VerificationCommand) this.registered_commands.set(loop_content.command_configuration().toJSON().name, loop_content);
+            else if (loop_content instanceof VerificationButton)  this.registered_buttons.set(loop_content.button_configuration().button_id, loop_content);
+            else if (loop_content instanceof VerificationModal)   this.registered_modals.set(loop_content.modal_configuration().modal_id, loop_content);
+        }
     }
 
     public event_signatures(): VerificationEvent[] {

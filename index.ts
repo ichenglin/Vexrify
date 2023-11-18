@@ -35,19 +35,25 @@ export const verification_cache = createClient({password: process.env.REDIS_PASS
 
 // registry
 export const verification_registry = new Registry();
-verification_registry.register(new VerifyCommand);
-verification_registry.register(new NickCommand);
-verification_registry.register(new PingCommand);
-verification_registry.register(new AwardsCommand);
-verification_registry.register(new SkillsCommand);
-verification_registry.register(new RosterCommand);
-verification_registry.register(new UpcomingCommand);
-verification_registry.register(new AssignCommand);
-verification_registry.register(new VerifyButton);
-verification_registry.register(new HelpButton);
-verification_registry.register(new VerifyModal);
-verification_registry.register(new ReadyEvent);
-verification_registry.register(new InteractionCreateEvent);
+verification_registry.register([
+    // commands
+    new VerifyCommand(),
+    new NickCommand(),
+    new PingCommand(),
+    new AwardsCommand(),
+    new SkillsCommand(),
+    new RosterCommand(),
+    new UpcomingCommand(),
+    new AssignCommand(),
+    // buttons
+    new VerifyButton(),
+    new HelpButton(),
+    // modals
+    new VerifyModal(),
+    // events
+    new ReadyEvent(),
+    new InteractionCreateEvent()
+]);
 
 // rest
 const discord_rest = new REST({version: "10"}).setToken(process.env.APPLICATION_TOKEN as string);
