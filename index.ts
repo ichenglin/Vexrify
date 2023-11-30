@@ -17,7 +17,7 @@ import HelpButton from "./commands/button_help";
 import RosterCommand from "./commands/command_roster";
 import UpcomingCommand from "./commands/command_upcoming";
 import AssignCommand from "./commands/command_assign";
-import PingCommand from "./commands/command_ping";
+import MessageCreateEvent from "./events/event_message_create";
 
 dotenv.config();
 
@@ -39,7 +39,6 @@ verification_registry.register([
     // commands
     new VerifyCommand(),
     new NickCommand(),
-    new PingCommand(),
     new AwardsCommand(),
     new SkillsCommand(),
     new RosterCommand(),
@@ -52,14 +51,19 @@ verification_registry.register([
     new VerifyModal(),
     // events
     new ReadyEvent(),
-    new InteractionCreateEvent()
+    new InteractionCreateEvent(),
+    new MessageCreateEvent()
 ]);
 
 // rest
 const discord_rest = new REST({version: "10"}).setToken(process.env.APPLICATION_TOKEN as string);
 
 // client
-const discord_client = new Client({intents: [GatewayIntentBits.Guilds]});
+const discord_client = new Client({intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent
+]});
 for (const event_signature of verification_registry.event_signatures()) discord_client.on(event_signature.event_configuration().name, async (...args) => await event_signature.event_trigger(...args));
 
 verification_cache.on("error", error => Logger.send_log("Cache login error."));
