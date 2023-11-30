@@ -1,5 +1,4 @@
 import Database from "../objects/database";
-import RobotEvent, { TeamData } from "../objects/robotevent";
 import { VerificationUserData } from "./user";
 
 export default class VerificationGuild {
@@ -7,12 +6,11 @@ export default class VerificationGuild {
     public static async teams_get(guild_id: string): Promise<VerificationTeamData[]> {
         const guild_users = await VerificationGuild.users_get(guild_id);
         // process teams
-        const guild_teams_raw = new Map<number, {team_number: string, team_data: TeamData, team_users: VerificationUserData[]}>();
+        const guild_teams_raw = new Map<number, {team_number: string, team_users: VerificationUserData[]}>();
         for (const loop_user of guild_users) {
             if (guild_teams_raw.has(loop_user.user_team_id)) guild_teams_raw.get(loop_user.user_team_id)?.team_users.push(loop_user);
             else                                             guild_teams_raw.set(loop_user.user_team_id, {
                 team_number: loop_user.user_team_number,
-                team_data:   await RobotEvent.get_team_by_number(loop_user.user_team_number) as TeamData,
                 team_users:  [loop_user]
             });
         }
@@ -28,6 +26,5 @@ export default class VerificationGuild {
 
 export interface VerificationTeamData {
     team_number: string,
-    team_data:   TeamData,
     team_users:  VerificationUserData[]
 }

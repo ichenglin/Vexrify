@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "
 import VerificationCommand from "../templates/template_command";
 import VerificationGuild from "../interactions/guild";
 import CountryFlag from "../utilities/flag";
+import RobotEvent, { TeamData } from "../objects/robotevent";
 
 export default class RosterCommand extends VerificationCommand {
 
@@ -15,7 +16,8 @@ export default class RosterCommand extends VerificationCommand {
     public async command_trigger(command_interaction: ChatInputCommandInteraction): Promise<void> {
         await command_interaction.deferReply();
         // get users
-        const guild_teams = await VerificationGuild.teams_get(command_interaction.guild?.id as string);
+        const guild_teams      = await VerificationGuild.teams_get(command_interaction.guild?.id as string);
+        const guild_teams_data = await Promise.all(guild_teams.map(team_data => RobotEvent.get_team_by_number(team_data.team_number) as Promise<TeamData>));
         if (guild_teams.length <= 0) {
             // no registered user in guild
             const invalid_embed = new EmbedBuilder()
@@ -30,12 +32,12 @@ export default class RosterCommand extends VerificationCommand {
             .setTitle(`📙 ${command_interaction.guild?.name}'s Roster 📙`)
             .setDescription(`**${command_interaction.guild?.name}** had a total of **${guild_teams.length} registered teams**, below are the teams and their members.\n\u200B`)
             .addFields(
-                ...guild_teams.sort((team_a, team_b) => team_a.team_number.localeCompare(team_b.team_number)).map((loop_team) => ({
+                ...guild_teams.sort((team_a, team_b) => team_a.team_number.localeCompare(team_b.team_number)).map((loop_team, loop_index) => ({
                     name:  `${loop_team.team_number}`,
                     value: [
-                        `\`${loop_team.team_data.team_name}\``,
-                        `<:vrc_dot_blue:1135437387619639316> Country: ${CountryFlag.get_flag(loop_team.team_data.team_country)}`,
-                        `<:vrc_dot_blue:1135437387619639316> Grade: \`${loop_team.team_data.team_grade}\``,
+                        `\`${guild_teams_data[loop_index].team_name}\``,
+                        `<:vrc_dot_blue:1135437387619639316> Country: ${CountryFlag.get_flag(guild_teams_data[loop_index].team_country)}`,
+                        `<:vrc_dot_blue:1135437387619639316> Grade: \`${guild_teams_data[loop_index].team_grade}\``,
                         ...loop_team.team_users.map(loop_user => `<@${loop_user.user_id}>`)
                     ].join("\n"),
                     inline: true

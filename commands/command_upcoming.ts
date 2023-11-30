@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import VerificationGuild, { VerificationTeamData } from "../interactions/guild";
-import RobotEvent from "../objects/robotevent";
+import VerificationGuild from "../interactions/guild";
+import RobotEvent, { TeamData } from "../objects/robotevent";
 import VerificationCommand from "../templates/template_command";
 import CountryFlag from "../utilities/flag";
 
@@ -17,7 +17,8 @@ export default class UpcomingCommand extends VerificationCommand {
     public async command_trigger(command_interaction: ChatInputCommandInteraction): Promise<void> {
         await command_interaction.deferReply();
         // get users
-        const guild_teams = await VerificationGuild.teams_get(command_interaction.guild?.id as string);
+        const guild_teams      = await VerificationGuild.teams_get(command_interaction.guild?.id as string);
+        const guild_teams_data = await Promise.all(guild_teams.map(team_data => RobotEvent.get_team_by_number(team_data.team_number) as Promise<TeamData>));
         if (guild_teams.length <= 0) {
             // no registered user in guild
             const invalid_embed = new EmbedBuilder()
@@ -27,8 +28,8 @@ export default class UpcomingCommand extends VerificationCommand {
             await command_interaction.editReply({embeds: [invalid_embed]});
             return;
         }
-        const guild_registered_teams = guild_teams.reduce((value_previous, value_current) => ({...value_previous, [value_current.team_data.team_id]: value_current}), {} as {[key: number]: VerificationTeamData});
-        let   guild_events           = await RobotEvent.get_guild_events((command_interaction.guild?.id as string), guild_teams.map(team_data => team_data.team_data.team_id), new Date());
+        const guild_registered_teams = guild_teams_data.reduce((value_previous, value_current) => ({...value_previous, [value_current.team_id]: value_current}), {} as {[key: number]: TeamData});
+        let   guild_events           = await RobotEvent.get_guild_events((command_interaction.guild?.id as string), guild_teams_data.map(team_data => team_data.team_id), new Date());
         const guild_events_total     = guild_events.length;
         const guild_events_maximum   = 10;
         guild_events = guild_events.slice(0, Math.min(guild_events_total, guild_events_maximum));
