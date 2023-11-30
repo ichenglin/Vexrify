@@ -1,4 +1,5 @@
 import { EmbedBuilder, Message } from "discord.js";
+import remove_markdown from "remove-markdown";
 import Logger from "../objects/logger";
 import VerificationEvent from "../templates/template_event";
 import VerificationGuild, { VerificationTeamData } from "../interactions/guild";
@@ -14,11 +15,13 @@ export default class MessageCreateEvent extends VerificationEvent {
     }
 
     public async event_trigger(message: Message): Promise<void> {
+        if (message.author.bot === true) return;
         await this.ping_event(message);
     }
 
     private async ping_event(message: Message): Promise<void> {
-        const ping_messages = [...new Set(Array.from(message.content.matchAll(/(?<![^\s])#([a-zA-Z\d]+)(?![^\s])/g)).map(ping_data => ({
+        const content_plain =  remove_markdown(message.content);
+        const ping_messages = [...new Set(Array.from(content_plain.matchAll(/(?<![^\s])#([a-zA-Z\d]+)(?![^\s])/g)).map(ping_data => ({
             ping_full:    ping_data[0].toUpperCase(),
             ping_content: ping_data[1].toUpperCase(),
             ping_index:   ping_data.index
