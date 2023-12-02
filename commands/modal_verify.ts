@@ -1,4 +1,4 @@
-import { EmbedBuilder, Guild, ModalSubmitInteraction } from "discord.js";
+import { APIEmbedField, EmbedBuilder, Guild, ModalSubmitInteraction } from "discord.js";
 import VerificationUser from "../interactions/user";
 import RobotEvent from "../objects/robotevent";
 import VerificationModal from "../templates/template_modal";
@@ -16,6 +16,7 @@ export default class VerifyModal extends VerificationModal {
         await modal_interaction.deferReply({ephemeral: true});
         const form_team_number = modal_interaction.fields.getTextInputValue("application_team").toUpperCase();
         const form_user_name   = modal_interaction.fields.getTextInputValue("application_nick");
+        const form_reason      = modal_interaction.fields.getTextInputValue("application_reason");
         // check for valid team id
         const team_data = await RobotEvent.get_team_by_number(form_team_number);
         if (team_data === undefined) {
@@ -67,14 +68,17 @@ export default class VerifyModal extends VerificationModal {
         const welcome_embed = new EmbedBuilder()
             .setTitle(`🎉 Welcome ${form_user_name} to ${modal_interaction.guild?.name} 🎉`)
             .setDescription(`<@${modal_interaction.user.id}> had verified as team **${team_data.team_number}**.\n\u200B`)
-            .addFields({
+            .addFields([{
                 name: team_data.team_name,
                 value: [
                     `<:vrc_dot_blue:1135437387619639316> Organization: \`${team_data.team_organization}\``,
                     `<:vrc_dot_blue:1135437387619639316> Country: ${CountryFlag.get_flag(team_data.team_country)} \`${team_data.team_country}\``,
                     `<:vrc_dot_blue:1135437387619639316> Grade: \`${team_data.team_grade}\``
                 ].join("\n")
-            })
+            }, ((form_reason.length <= 0) || {
+                name: "Additional Information",
+                value: `\`\`\`${form_reason}\`\`\``
+            })].filter(field_data => field_data !== true) as APIEmbedField[])
             .setImage(welcome_image[Math.floor(Math.random() * welcome_image.length)])
             .setColor("#E879F9");
         await VerificationUser.username_set(modal_interaction.guild as Guild, modal_interaction.user, `${form_user_name} | ${team_data.team_number}`);

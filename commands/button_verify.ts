@@ -38,7 +38,7 @@ export default class VerifyButton extends VerificationButton {
             .setStyle(TextInputStyle.Short);
         const verify_input_reason = new TextInputBuilder()
             .setCustomId("application_reason")
-            .setLabel("Declare your understanding of Pallas's cat")
+            .setLabel("Additional Information")
             .setRequired(false)
             .setStyle(TextInputStyle.Paragraph);
         verify_modal.addComponents(
