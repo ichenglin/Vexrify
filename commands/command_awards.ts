@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "
 import VerificationPriority from "../utilities/priority";
 import RobotEvent from "../objects/robotevent";
 import VerificationCommand from "../templates/template_command";
+import VerificationDisplay from "../utilities/display";
 
 export default class AwardsCommand extends VerificationCommand {
 
@@ -54,14 +55,26 @@ export default class AwardsCommand extends VerificationCommand {
             .setDescription(`**${team_data.team_name} (${team_data.team_number})** had won a total of **${team_awards.length} awards**, below are the details of the awards and their events.\n\u200B`)
             .addFields(
                 ...team_awards_sorted.map((award_data) => {
-                    let award_events = award_data.award_events.map((event_data, event_index) => `▪️ \`${event_data}\``).join("\n");
-                    if (award_events.length > 1024) award_events = `${award_events.slice(0, 1024 - 4)}\`...`;
-                    return {name: `🎖️ ${award_data.award_name} x${award_data.award_events.length} 🎖️`, value: award_events};
+                    const message_limit      = "(and more events...)\n";
+                    let award_events_display = "";
+                    let award_events         = award_data.award_events.map((event_data, event_index) => `<:vrc_dot_blue:1135437387619639316> \`${event_data}\`\n`);
+                    for (let event_index = 0; event_index < award_events.length; event_index++) {
+                        const event_string       = award_events[event_index];
+                        const display_length_new = (award_events_display.length + event_string.length + message_limit.length);
+                        if (display_length_new > 1024) {
+                            award_events_display += message_limit;
+                            break;
+                        }
+                        award_events_display += event_string;
+                    }
+                    return {name: `🎖️ ${award_data.award_name} x${award_data.award_events.length} 🎖️`, value: `${award_events_display}\u200B`};
                 }))
             .setTimestamp()
             .setFooter({text: `requested by ${command_interaction.user.tag}`, iconURL: command_interaction.client.user.displayAvatarURL()})
             .setColor("#84cc16");
-        await command_interaction.editReply({embeds: [awards_embed]});
+        const embed_builders = VerificationDisplay.embed_safe(awards_embed);
+        await command_interaction.editReply({embeds: [embed_builders[0]]});
+        for (const embed_children of embed_builders.slice(1)) await command_interaction.channel?.send({embeds: [embed_children]});
     }
 
 }

@@ -1,3 +1,5 @@
+import { APIEmbedField, EmbedBuilder } from "discord.js";
+
 export default class VerificationDisplay {
 
     public static string_list(string_items: string[]): string {
@@ -7,6 +9,48 @@ export default class VerificationDisplay {
         const index_last = (string_items.length - 1);
         string_items[index_last] = `and ${string_items[index_last]}`;
         return string_items.join(", ");
+    }
+
+    public static embed_safe(embed_data: EmbedBuilder): EmbedBuilder[] {
+        const embed_header_length = [
+            embed_data.data.title,
+            embed_data.data.description,
+        ].filter(embed_text => embed_text !== undefined).join().length;
+        const embed_footer_length = (embed_data.data.footer?.text.length || 0);
+        // divide fields into groups
+        const embed_field_group: APIEmbedField[][] = [[]];
+        for (let field_index = 0; field_index < (embed_data.data.fields?.length || 0); field_index++) {
+            const field_object      = (embed_data.data.fields as APIEmbedField[])[field_index];
+            const field_length      = (field_object.name + field_object.value).length;
+            const group_last        = embed_field_group[embed_field_group.length - 1];
+            const group_last_length = group_last.map(field_data => field_data.name + field_data.value).join().length;
+            // calculate group length
+            let group_new_length = group_last_length + field_length;
+            if (embed_field_group.length === 1)                                   group_new_length += embed_header_length;
+            if (field_index === ((embed_data.data.fields?.length as number) - 1)) group_new_length += embed_footer_length;
+            // if adding new field exceed limit of 6000 characters, create a new group
+            if (group_new_length > 6000)        embed_field_group.push([]);
+            embed_field_group[embed_field_group.length - 1].push(field_object);
+        }
+        // construct embeds from groups
+        const embed_group: EmbedBuilder[] = [];
+        for (let group_index = 0; group_index < embed_field_group.length; group_index++) {
+            const group_embed = new EmbedBuilder();
+            group_embed.setFields(embed_field_group[group_index]);
+            group_embed.setColor(embed_data.data.color || null);
+            // headers
+            if (group_index === 0) {
+                group_embed.setTitle(      embed_data.data.title       || null);
+                group_embed.setDescription(embed_data.data.description || null);
+            }
+            // footers
+            if (group_index === (embed_field_group.length - 1)) {
+                group_embed.setFooter(embed_data.data.footer || null);
+                group_embed.setTimestamp(new Date(embed_data.data.timestamp as string));
+            }
+            embed_group.push(group_embed);
+        }
+        return embed_group;
     }
 
 }
