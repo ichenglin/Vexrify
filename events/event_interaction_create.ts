@@ -20,6 +20,7 @@ export default class InteractionCreateEvent extends VerificationEvent {
             Logger.send_log(`Event processed in ${Date.now() - interaction.createdTimestamp} ms.`);
         } catch (error) {
             Logger.send_log(`An error has occured in event triggers. (Type=${InteractionType[interaction.type]})`);
+            Logger.send_log(error as string);
             if (interaction.type !== InteractionType.ApplicationCommand) return;
             // report command error
             const interaction_element = (interaction as ChatInputCommandInteraction);
