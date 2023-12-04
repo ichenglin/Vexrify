@@ -19,8 +19,8 @@ export default class InteractionCreateEvent extends VerificationEvent {
             else if (interaction.isModalSubmit())      await verification_registry.modal_trigger(interaction);
             Logger.send_log(`Event processed in ${Date.now() - interaction.createdTimestamp} ms.`);
         } catch (error) {
-            Logger.send_log(`An error has occured in event triggers. (Type=${InteractionType[interaction.type]})`);
-            Logger.send_log(error as string);
+            Logger.send_log(`\nAn error has occured in event triggers. (Type=${InteractionType[interaction.type]})`);
+            Logger.send_log(`\n${(error as Error).message}\n`);
             if (interaction.type !== InteractionType.ApplicationCommand) return;
             // report command error
             const interaction_element = (interaction as ChatInputCommandInteraction);
