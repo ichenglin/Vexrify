@@ -3,6 +3,7 @@ import VerificationCommand from "../templates/template_command";
 import VerificationGuild from "../interactions/guild";
 import CountryFlag from "../utilities/flag";
 import RobotEvent, { TeamData } from "../objects/robotevent";
+import VerificationDisplay from "../utilities/display";
 
 export default class RosterCommand extends VerificationCommand {
 
@@ -45,7 +46,10 @@ export default class RosterCommand extends VerificationCommand {
             .setTimestamp()
             .setFooter({text: `requested by ${command_interaction.user.tag}`, iconURL: command_interaction.client.user.displayAvatarURL()})
             .setColor("#84cc16");
-        await command_interaction.editReply({embeds: [roster_embed]});
+        // send embed
+        const embed_safe = VerificationDisplay.embed_safe(roster_embed);
+        await command_interaction.editReply(embed_safe[0]);
+        for (const embed_children of embed_safe.slice(1)) await command_interaction.channel?.send(embed_children);
     }
 
 }

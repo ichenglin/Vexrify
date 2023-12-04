@@ -72,9 +72,10 @@ export default class AwardsCommand extends VerificationCommand {
             .setTimestamp()
             .setFooter({text: `requested by ${command_interaction.user.tag}`, iconURL: command_interaction.client.user.displayAvatarURL()})
             .setColor("#84cc16");
-        const embed_builders = VerificationDisplay.embed_safe(awards_embed);
-        await command_interaction.editReply({embeds: [embed_builders[0]]});
-        for (const embed_children of embed_builders.slice(1)) await command_interaction.channel?.send({embeds: [embed_children]});
+        // send embed
+        const embed_safe = VerificationDisplay.embed_safe(awards_embed);
+        await command_interaction.editReply(embed_safe[0]);
+        for (const embed_children of embed_safe.slice(1)) await command_interaction.channel?.send(embed_children);
     }
 
 }

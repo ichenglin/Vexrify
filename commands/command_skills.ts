@@ -1,7 +1,8 @@
-import { AttachmentBuilder, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { AttachmentBuilder, ChatInputCommandInteraction, EmbedBuilder, InteractionEditReplyOptions, MessagePayload, SlashCommandBuilder } from "discord.js";
 import * as NodeChartJS from "chartjs-node-canvas";
 import RobotEvent, { SeasonData } from "../objects/robotevent";
 import VerificationCommand from "../templates/template_command";
+import VerificationDisplay from "../utilities/display";
 
 export default class SkillsCommand extends VerificationCommand {
 
@@ -114,6 +115,9 @@ export default class SkillsCommand extends VerificationCommand {
             y: {ticks: {color: "white", font: {size: 20, weight: "800"}}, suggestedMin: 0} as any
         }}});
         const skills_image = new AttachmentBuilder(skills_buffer, {name: "skills_graph.png"});
-        await command_interaction.editReply({embeds: [skills_embed], files: [skills_image]});
+        // send embed
+        const embed_safe = VerificationDisplay.embed_safe(skills_embed, [skills_image]);
+        await command_interaction.editReply(embed_safe[0]);
+        for (const embed_children of embed_safe.slice(1)) await command_interaction.channel?.send(embed_children);
     }
 }

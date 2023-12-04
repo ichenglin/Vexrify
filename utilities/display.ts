@@ -1,4 +1,4 @@
-import { APIEmbedField, EmbedBuilder } from "discord.js";
+import { APIEmbedField, AttachmentBuilder, BaseMessageOptions, EmbedBuilder } from "discord.js";
 
 export default class VerificationDisplay {
 
@@ -11,7 +11,7 @@ export default class VerificationDisplay {
         return string_items.join(", ");
     }
 
-    public static embed_safe(embed_data: EmbedBuilder): EmbedBuilder[] {
+    public static embed_safe(embed_data: EmbedBuilder, attachment_data?: AttachmentBuilder[]): BaseMessageOptions[] {
         const embed_header_length = [
             embed_data.data.title,
             embed_data.data.description,
@@ -33,22 +33,25 @@ export default class VerificationDisplay {
             embed_field_group[embed_field_group.length - 1].push(field_object);
         }
         // construct embeds from groups
-        const embed_group: EmbedBuilder[] = [];
+        const embed_group: BaseMessageOptions[] = [];
         for (let group_index = 0; group_index < embed_field_group.length; group_index++) {
-            const group_embed = new EmbedBuilder();
-            group_embed.setFields(embed_field_group[group_index]);
-            group_embed.setColor(embed_data.data.color || null);
+            const group_embed  = new EmbedBuilder();
+            const group_header = (group_index === 0);
+            const group_footer = (group_index === (embed_field_group.length - 1));
+            group_embed.setFields(         embed_field_group[group_index]);
+            group_embed.setColor(          embed_data.data.color       || null);
             // headers
-            if (group_index === 0) {
+            if (group_header) {
                 group_embed.setTitle(      embed_data.data.title       || null);
                 group_embed.setDescription(embed_data.data.description || null);
             }
             // footers
-            if (group_index === (embed_field_group.length - 1)) {
-                group_embed.setFooter(embed_data.data.footer || null);
-                group_embed.setTimestamp(new Date(embed_data.data.timestamp as string));
+            if (group_footer) {
+                group_embed.setImage(      embed_data.data.image?.url  || null);
+                group_embed.setFooter(     embed_data.data.footer    !== undefined ? {text: embed_data.data.footer.text, iconURL: embed_data.data.footer.icon_url} : null);
+                group_embed.setTimestamp(  embed_data.data.timestamp !== undefined ? new Date(embed_data.data.timestamp)                                           : null);
             }
-            embed_group.push(group_embed);
+            embed_group.push({embeds: [group_embed], files: (group_footer ? attachment_data : undefined)});
         }
         return embed_group;
     }
