@@ -53,6 +53,7 @@ export default class UpcomingCommand extends VerificationCommand {
                         event_data.event_location.address_country
                     ].filter(address_component => address_component != null && address_component.length > 0).join(", ");
                     const event_teams_guild    = guild_events_teams[event_index].filter(team_data => guild_registered_teams[team_data.team_id] !== undefined);
+                    const event_teams_list     = (event_teams_guild.length > 0) ? event_teams_guild.map(team_data => team_data.team_number).join("\`, \`") : "(Waitlisted)";
                     const event_teams_excluded = guild_events_teams[event_index].length - event_teams_guild.length;
                     const event_links          = [{
                         link_name: "Robot Events",
@@ -66,7 +67,7 @@ export default class UpcomingCommand extends VerificationCommand {
                         value: [
                             `<:vrc_dot_blue:1135437387619639316> Location: ${CountryFlag.get_flag(event_data.event_location.address_country)} \`${event_region}\``,
                             `<:vrc_dot_blue:1135437387619639316> Date: <t:${Math.floor(new Date(event_data.event_date.date_begin).getTime() / 1000)}:R>`,
-                            `<:vrc_dot_blue:1135437387619639316> Teams: \`${event_teams_guild.map(team_data => team_data.team_number).join("\`, \`")}\` and \`${event_teams_excluded}\` more team(s)...`,
+                            `<:vrc_dot_blue:1135437387619639316> Teams: \`${event_teams_list}\` and \`${event_teams_excluded}\` more team(s)...`,
                             `<:vrc_dot_blue:1135437387619639316> Links: ${event_links.map(link_data => `[**\`${link_data.link_name}\`**](${link_data.link_url})`).join(", ")}`,
                             `\u200B`
                         ].join("\n")
