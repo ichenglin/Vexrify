@@ -33,16 +33,19 @@ export default class RosterCommand extends VerificationCommand {
             .setTitle(`📙 ${command_interaction.guild?.name}'s Roster 📙`)
             .setDescription(`**${command_interaction.guild?.name}** had a total of **${guild_teams.length} registered teams**, below are the teams and their members.\n\u200B`)
             .addFields(
-                ...guild_teams.sort((team_a, team_b) => team_a.team_number.localeCompare(team_b.team_number)).map((loop_team, loop_index) => ({
-                    name:  `${loop_team.team_number}`,
-                    value: [
-                        `\`${guild_teams_data[loop_index].team_name}\``,
-                        `<:vrc_dot_blue:1135437387619639316> Country: ${CountryFlag.get_flag(guild_teams_data[loop_index].team_country)}`,
-                        `<:vrc_dot_blue:1135437387619639316> Grade: \`${guild_teams_data[loop_index].team_grade}\``,
-                        ...loop_team.team_users.map(loop_user => `<@${loop_user.user_id}>`)
-                    ].join("\n"),
-                    inline: true
-                })))
+                ...guild_teams.sort((team_a, team_b) => team_a.team_number.localeCompare(team_b.team_number)).map((loop_team, loop_index) => {
+                    const loop_team_data = guild_teams_data.find(guild_team => guild_team.team_number === loop_team.team_number) as TeamData;
+                    return {
+                        name:  `${loop_team.team_number}`,
+                        value: [
+                            `\`${loop_team_data.team_name}\``,
+                            `<:vrc_dot_blue:1135437387619639316> Country: ${CountryFlag.get_flag(loop_team_data.team_country)}`,
+                            `<:vrc_dot_blue:1135437387619639316> Grade: \`${loop_team_data.team_grade}\``,
+                            ...loop_team.team_users.map(loop_user => `<@${loop_user.user_id}>`)
+                        ].join("\n"),
+                        inline: true
+                    };
+                }))
             .setTimestamp()
             .setFooter({text: `requested by ${command_interaction.user.tag}`, iconURL: command_interaction.client.user.displayAvatarURL()})
             .setColor("#84cc16");
