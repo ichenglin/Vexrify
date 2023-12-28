@@ -32,6 +32,14 @@ export default class HelpCommand extends VerificationCommand {
                     ].join("\n")
                 };
             }))
+            .addFields({
+                name: "🔔 Ping Team (#[team])",
+                value: [
+                    "\`Pings all users from a team in text messages.\`",
+                    `${VerificationDisplay.LIST_MARKER} Prerequisites: \`✅ None\``,
+                    `${VerificationDisplay.LIST_MARKER} Compatibility: \`⚠️ Guild Only\``
+                ].join("\n")
+            })
             .setTimestamp()
             .setFooter({text: `requested by ${command_interaction.user.tag}`, iconURL: command_interaction.client.user.displayAvatarURL()})
             .setColor("#84cc16");
