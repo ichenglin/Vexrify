@@ -18,6 +18,7 @@ import RosterCommand from "./commands/command_roster";
 import UpcomingCommand from "./commands/command_upcoming";
 import AssignCommand from "./commands/command_assign";
 import MessageCreateEvent from "./events/event_message_create";
+import HelpCommand from "./commands/command_help";
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ export const verification_cache = createClient({password: process.env.REDIS_PASS
 export const verification_registry = new Registry();
 verification_registry.register([
     // commands
+    new HelpCommand(),
     new VerifyCommand(),
     new NickCommand(),
     new AwardsCommand(),

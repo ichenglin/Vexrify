@@ -1,6 +1,8 @@
-import { APIEmbedField, AttachmentBuilder, BaseMessageOptions, EmbedBuilder } from "discord.js";
+import { APIEmbedField, AttachmentBuilder, BaseMessageOptions, EmbedBuilder, PermissionFlagsBits } from "discord.js";
 
 export default class VerificationDisplay {
+
+    public static readonly LIST_MARKER = "<:vrc_dot_blue:1135437387619639316>";
 
     public static string_list(string_items: string[]): string {
         if      (string_items.length <= 0)  return "";
@@ -9,6 +11,16 @@ export default class VerificationDisplay {
         const index_last = (string_items.length - 1);
         string_items[index_last] = `and ${string_items[index_last]}`;
         return string_items.join(", ");
+    }
+
+    public static permission_list(permission_list: bigint): string[] {
+        const permission_flag_names = Object.getOwnPropertyNames(PermissionFlagsBits);
+        const permission_flag_used  = [] as string[];
+        permission_flag_names.forEach(flag_name => {
+            const flag_set = (permission_list & (PermissionFlagsBits as {[index: string]: bigint})[flag_name]) !== BigInt(0);
+            if (flag_set) permission_flag_used.push(flag_name);
+        });
+        return permission_flag_used;
     }
 
     public static embed_safe(embed_data: EmbedBuilder, attachment_data?: AttachmentBuilder[]): BaseMessageOptions[] {
