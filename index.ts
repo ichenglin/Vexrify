@@ -37,14 +37,16 @@ export const verification_cache = createClient({password: process.env.REDIS_PASS
 // registry
 export const verification_registry = new Registry();
 verification_registry.register([
-    // commands
+    // commands (general)
     new HelpCommand(),
-    new VerifyCommand(),
-    new NickCommand(),
     new AwardsCommand(),
     new SkillsCommand(),
+    // commands (guild)
+    new NickCommand(),
     new RosterCommand(),
     new UpcomingCommand(),
+    // commands (administration)
+    new VerifyCommand(),
     new AssignCommand(),
     // buttons
     new VerifyButton(),
@@ -79,7 +81,7 @@ verification_cache.on("error", error => Logger.send_log("Cache login error."));
     (discord_client.user as ClientUser).setPresence({
         status: "online",
         activities: [{
-            name: "Vex Robotics",
+            name: "Vex Robotics (/help)",
             type: ActivityType.Playing,
         }]
     });
