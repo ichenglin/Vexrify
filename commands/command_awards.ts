@@ -57,7 +57,7 @@ export default class AwardsCommand extends VerificationCommand {
                 ...team_awards_sorted.map((award_data) => {
                     const message_limit      = "(and more events...)\n";
                     let award_events_display = "";
-                    let award_events         = award_data.award_events.map((event_data, event_index) => `<:vrc_dot_blue:1135437387619639316> \`${event_data}\`\n`);
+                    let award_events         = award_data.award_events.map((event_data, event_index) => `${VerificationDisplay.LIST_MARKER} \`${event_data}\`\n`);
                     for (let event_index = 0; event_index < award_events.length; event_index++) {
                         const event_string       = award_events[event_index];
                         const display_length_new = (award_events_display.length + event_string.length + message_limit.length);

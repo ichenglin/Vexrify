@@ -39,8 +39,8 @@ export default class RosterCommand extends VerificationCommand {
                         name:  `${loop_team.team_number}`,
                         value: [
                             `\`${loop_team_data.team_name}\``,
-                            `<:vrc_dot_blue:1135437387619639316> Country: ${CountryFlag.get_flag(loop_team_data.team_country)}`,
-                            `<:vrc_dot_blue:1135437387619639316> Grade: \`${loop_team_data.team_grade}\``,
+                            `${VerificationDisplay.LIST_MARKER} Country: ${CountryFlag.get_flag(loop_team_data.team_country)}`,
+                            `${VerificationDisplay.LIST_MARKER} Grade: \`${loop_team_data.team_grade}\``,
                             ...loop_team.team_users.map(loop_user => `<@${loop_user.user_id}>`)
                         ].join("\n"),
                         inline: true

@@ -2,6 +2,7 @@ import { APIEmbedField, EmbedBuilder, Guild, ModalSubmitInteraction } from "disc
 import VerificationUser from "../interactions/user";
 import RobotEvent from "../objects/robotevent";
 import VerificationModal from "../templates/template_modal";
+import VerificationDisplay from "../utilities/display";
 import CountryFlag from "../utilities/flag";
 
 export default class VerifyModal extends VerificationModal {
@@ -71,9 +72,9 @@ export default class VerifyModal extends VerificationModal {
             .addFields([{
                 name: team_data.team_name,
                 value: [
-                    `<:vrc_dot_blue:1135437387619639316> Organization: \`${team_data.team_organization}\``,
-                    `<:vrc_dot_blue:1135437387619639316> Country: ${CountryFlag.get_flag(team_data.team_country)} \`${team_data.team_country}\``,
-                    `<:vrc_dot_blue:1135437387619639316> Grade: \`${team_data.team_grade}\``
+                    `${VerificationDisplay.LIST_MARKER} Organization: \`${team_data.team_organization}\``,
+                    `${VerificationDisplay.LIST_MARKER} Country: ${CountryFlag.get_flag(team_data.team_country)} \`${team_data.team_country}\``,
+                    `${VerificationDisplay.LIST_MARKER} Grade: \`${team_data.team_grade}\``
                 ].join("\n")
             }, ((form_reason.length <= 0) || {
                 name: "Additional Information",

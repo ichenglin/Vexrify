@@ -65,10 +65,10 @@ export default class UpcomingCommand extends VerificationCommand {
                     return {
                         name: `📌 ${event_data.event_name} 📌`,
                         value: [
-                            `<:vrc_dot_blue:1135437387619639316> Location: ${CountryFlag.get_flag(event_data.event_location.address_country)} \`${event_region}\``,
-                            `<:vrc_dot_blue:1135437387619639316> Date: <t:${Math.floor(new Date(event_data.event_date.date_begin).getTime() / 1000)}:R>`,
-                            `<:vrc_dot_blue:1135437387619639316> Teams: \`${event_teams_list}\` and \`${event_teams_excluded}\` more team(s)...`,
-                            `<:vrc_dot_blue:1135437387619639316> Links: ${event_links.map(link_data => `[**\`${link_data.link_name}\`**](${link_data.link_url})`).join(", ")}`,
+                            `${VerificationDisplay.LIST_MARKER} Location: ${CountryFlag.get_flag(event_data.event_location.address_country)} \`${event_region}\``,
+                            `${VerificationDisplay.LIST_MARKER} Date: <t:${Math.floor(new Date(event_data.event_date.date_begin).getTime() / 1000)}:R>`,
+                            `${VerificationDisplay.LIST_MARKER} Teams: \`${event_teams_list}\` and \`${event_teams_excluded}\` more team(s)...`,
+                            `${VerificationDisplay.LIST_MARKER} Links: ${event_links.map(link_data => `[**\`${link_data.link_name}\`**](${link_data.link_url})`).join(", ")}`,
                             `\u200B`
                         ].join("\n")
                     }

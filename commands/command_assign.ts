@@ -3,6 +3,7 @@ import VerificationCommand from "../templates/template_command";
 import VerificationUser from "../interactions/user";
 import RobotEvent from "../objects/robotevent";
 import CountryFlag from "../utilities/flag";
+import VerificationDisplay from "../utilities/display";
 
 export default class AssignCommand extends VerificationCommand {
 
@@ -95,8 +96,8 @@ export default class AssignCommand extends VerificationCommand {
             .addFields([(updated_team) && {
                 name: `🏦 Team Number 🏦`,
                 value: [
-                    (team_data !== undefined) ? `<:vrc_dot_blue:1135437387619639316> Country: ${CountryFlag.get_flag(team_data.team_country)} \`${team_data.team_country}\`` : undefined,
-                    (team_data !== undefined) ? `<:vrc_dot_blue:1135437387619639316> Organization: \`${team_data.team_organization}\``                                       : undefined,
+                    (team_data !== undefined) ? `${VerificationDisplay.LIST_MARKER} Country: ${CountryFlag.get_flag(team_data.team_country)} \`${team_data.team_country}\`` : undefined,
+                    (team_data !== undefined) ? `${VerificationDisplay.LIST_MARKER} Organization: \`${team_data.team_organization}\``                                       : undefined,
                     `\`\`\`diff\n- ${user_data.user_team_number}\n+ ${assign_team}\`\`\``
                 ].join("\n")
             }, (updated_name) && {

@@ -67,9 +67,9 @@ export default class SkillsCommand extends VerificationCommand {
             .addFields(
                 ...team_season_skills_sorted.map((skill_data) => (
                     {name: `🏁 ${skill_data.season_data.season_name} 🏁`, value: [
-                        `<:vrc_dot_blue:1135437387619639316> Rank: \`#${skill_data.season_skills.skills_rank}\` out of ${skill_data.season_skills.skills_entries} entries (\`Top ${Math.ceil(skill_data.season_skills.skills_rank / skill_data.season_skills.skills_entries * 100)}%\`)`,
-                        `<:vrc_dot_blue:1135437387619639316> Driver: \`${skill_data.season_skills.skills_score.driver_score}\``,
-                        `<:vrc_dot_blue:1135437387619639316> Programming: \`${skill_data.season_skills.skills_score.programming_score}\``
+                        `${VerificationDisplay.LIST_MARKER} Rank: \`#${skill_data.season_skills.skills_rank}\` out of ${skill_data.season_skills.skills_entries} entries (\`Top ${Math.ceil(skill_data.season_skills.skills_rank / skill_data.season_skills.skills_entries * 100)}%\`)`,
+                        `${VerificationDisplay.LIST_MARKER} Driver: \`${skill_data.season_skills.skills_score.driver_score}\``,
+                        `${VerificationDisplay.LIST_MARKER} Programming: \`${skill_data.season_skills.skills_score.programming_score}\``
                     ].join("\n")}
                 )))
             .setImage("attachment://skills_graph.png")
