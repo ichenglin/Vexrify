@@ -13,6 +13,8 @@
     "chartjs-node-canvas": "^4.1.6",
     "discord.js": "^14.8.0",
     "dotenv": "^16.0.3",
+    "geo-tz": "^7.0.7",
+    "moment-timezone": "^0.5.43",
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.9",
     "redis": "^4.6.5",

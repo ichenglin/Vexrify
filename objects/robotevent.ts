@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 import VerificationCache from "./cache";
 import Logger from "./logger";
+import VerificationTimezone from "../utilities/timezone";
 
 export default class RobotEvent {
 
@@ -124,26 +125,31 @@ export default class RobotEvent {
         const api_cache = await VerificationCache.cache_get(`ROBOTEVENT_GUILDEVENTS_${guild_id}`);
         if (api_cache !== undefined) return api_cache.cache_data;
         // cache not exist
-        const result = (await this.get_response(`events?${team_ids.map(team_id => `team[]=${team_id}`).join("&")}&start=${event_after.toISOString()}&per_page=1000`)).map((event_data: any) => ({
-            event_id:             event_data.id,
-            event_sku:            event_data.sku,
-            event_name:           event_data.name,
-            event_date: {
-                date_begin:       event_data.start,
-                date_end:         event_data.end
-            },
-            event_program: {
-                program_id:       event_data.program.id,
-                program_name:     event_data.program.name
-            },
-            event_location: {
-                address_lines:    [event_data.location.address_1, event_data.location.address_2].filter(address_line => address_line != null),
-                address_city:     event_data.location.city,
-                address_state:    event_data.location.region,
-                address_postcode: event_data.location.postcode,
-                address_country:  event_data.location.country,
-            }
-        } as EventData));
+        const result = (await this.get_response(`events?${team_ids.map(team_id => `team[]=${team_id}`).join("&")}&start=${event_after.toISOString()}&per_page=1000`)).map((event_data: any) => {
+            const event_timezone = VerificationTimezone.timezone_get(event_data.location.coordinates.lat, event_data.location.coordinates.lon);
+            return {
+                event_id:              event_data.id,
+                event_sku:             event_data.sku,
+                event_name:            event_data.name,
+                event_date: {
+                    date_begin:        VerificationTimezone.timezone_set(event_data.start, event_timezone[0].timezone_offset).toUTCString(),
+                    date_end:          VerificationTimezone.timezone_set(event_data.end,   event_timezone[0].timezone_offset).toUTCString()
+                },
+                event_program: {
+                    program_id:        event_data.program.id,
+                    program_name:      event_data.program.name
+                },
+                event_location: {
+                    address_lines:     [event_data.location.address_1, event_data.location.address_2].filter(address_line => address_line != null),
+                    address_city:      event_data.location.city,
+                    address_state:     event_data.location.region,
+                    address_postcode:  event_data.location.postcode,
+                    address_country:   event_data.location.country,
+                    address_latitude:  event_data.location.coordinates.lat,
+                    address_longitude: event_data.location.coordinates.lon
+                }
+            } as EventData;
+        });
         await VerificationCache.cache_set(`ROBOTEVENT_GUILDEVENTS_${guild_id}`, result);
         return result;
     }
@@ -216,11 +222,13 @@ export interface SeasonData {
 }
 
 export interface LocationData {
-    address_lines:    string[],
-    address_city:     string,
-    address_state:    string,
-    address_postcode: string,
-    address_country:  string,
+    address_lines:     string[],
+    address_city:      string,
+    address_state:     string,
+    address_postcode:  string,
+    address_country:   string,
+    address_latitude:  number,
+    address_longitude: number
 }
 
 export interface TeamAward {
