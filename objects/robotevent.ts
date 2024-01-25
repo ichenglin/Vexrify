@@ -92,10 +92,10 @@ export default class RobotEvent {
             skills_score: {
                 driver_score:           skill_data.scores.driver,
                 driver_time_stop:       skill_data.scores.driverStopTime,
-                driver_score_date:      skill_data.scores.driverScoredAt,
+                driver_score_date:      new Date(skill_data.scores.driverScoredAt).getTime(),
                 programming_score:      skill_data.scores.programming,
                 programming_time_stop:  skill_data.scores.progStopTime,
-                programming_score_date: skill_data.scores.progScoredAt,
+                programming_score_date: new Date(skill_data.scores.progScoredAt).getTime()
             }
         } as SeasonSkills));
         await VerificationCache.cache_set(`ROBOTEVENT_SEASONSKILLS_${season_id}`, result);
@@ -132,8 +132,8 @@ export default class RobotEvent {
                 event_sku:             event_data.sku,
                 event_name:            event_data.name,
                 event_date: {
-                    date_begin:        VerificationTimezone.timezone_set(event_data.start, event_timezone[0].timezone_offset).toUTCString(),
-                    date_end:          VerificationTimezone.timezone_set(event_data.end,   event_timezone[0].timezone_offset).toUTCString()
+                    date_begin:        VerificationTimezone.timezone_set(event_data.start, event_timezone[0].timezone_offset).getTime(),
+                    date_end:          VerificationTimezone.timezone_set(event_data.end,   event_timezone[0].timezone_offset).getTime()
                 },
                 event_program: {
                     program_id:        event_data.program.id,
@@ -206,8 +206,8 @@ export interface EventData {
     event_sku:        string,
     event_name:       string,
     event_date: {
-        date_begin:   string,
-        date_end:     string
+        date_begin:   number,
+        date_end:     number
     },
     event_program: {
         program_id:   number,
@@ -255,10 +255,10 @@ export interface SeasonSkills {
         // driver
         driver_score:            number,
         driver_time_stop:        number,
-        driver_score_date:       string,
+        driver_score_date:       number,
         // programming
         programming_score:       number,
         programming_time_stop:   number,
-        programming_score_date:  string
+        programming_score_date:  number
     }
 }

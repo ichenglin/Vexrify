@@ -34,6 +34,7 @@ export default class UpcomingCommand extends VerificationCommand {
         const guild_events_total     = guild_events.length;
         const guild_events_maximum   = 10;
         guild_events = guild_events.slice(0, Math.min(guild_events_total, guild_events_maximum));
+        guild_events = guild_events.sort((event_data_a, event_data_b) => event_data_a.event_date.date_begin - event_data_b.event_date.date_begin);
         const guild_events_teams     = await Promise.all(guild_events.map(event_data => RobotEvent.get_event_teams(event_data.event_id)));
         // embed
         const events_embed = new EmbedBuilder()
@@ -66,7 +67,7 @@ export default class UpcomingCommand extends VerificationCommand {
                         name: `📌 ${event_data.event_name} 📌`,
                         value: [
                             `${VerificationDisplay.LIST_MARKER} Location: ${CountryFlag.get_flag(event_data.event_location.address_country)} \`${event_region}\``,
-                            `${VerificationDisplay.LIST_MARKER} Date: <t:${Math.floor(new Date(event_data.event_date.date_begin).getTime() / 1000)}:R>`,
+                            `${VerificationDisplay.LIST_MARKER} Date: <t:${Math.floor(event_data.event_date.date_begin / 1000)}:R>`,
                             `${VerificationDisplay.LIST_MARKER} Teams: \`${event_teams_list}\` and \`${event_teams_excluded}\` more team(s)...`,
                             `${VerificationDisplay.LIST_MARKER} Links: ${event_links.map(link_data => `[**\`${link_data.link_name}\`**](${link_data.link_url})`).join(", ")}`,
                             `\u200B`
