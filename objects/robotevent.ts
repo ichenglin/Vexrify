@@ -22,9 +22,13 @@ export default class RobotEvent {
             team_name:         api_team.team_name,
             team_organization: api_team.organization,
             team_country:      (api_team.location === undefined) || (api_team.location.country),
-            team_program:      (api_team.program  === undefined) || (api_team.program.name),
+            team_program:      (api_team.program  === undefined) || {
+                program_id:    api_team.program.id,
+                program_name:  api_team.program.name,
+                program_code:  api_team.program.code
+            },
             team_grade:        api_team.grade
-        };
+        } as TeamData;
         await VerificationCache.cache_set(`ROBOTEVENT_TEAMBYNUMBER_${team_number}`, result);
         return result;
     }
@@ -218,7 +222,7 @@ export default class RobotEvent {
         if (api_response.data.length <= 0) return [];
         const api_data: any[] = api_response.data;
         const api_response_continued = await Promise.all(new Array(api_response.meta.last_page - 1).fill(0).map((zero_lol, page_index) => 
-            this.fetch_retries(`https://www.robotevents.com/api/v2/${api_path}?page=${api_response.meta.last_page - page_index}`, 5).then(response => response.json())
+            this.fetch_retries(`https://www.robotevents.com/api/v2/${api_path}${api_path.includes("?") ? "&" : "?"}page=${api_response.meta.last_page - page_index}`, 5).then(response => response.json())
         ));
         for (let page_index = 0; page_index < (api_response.meta.last_page - 1); page_index++) {
             api_data.push(...api_response_continued[page_index].data);
@@ -251,7 +255,7 @@ export interface TeamData {
     team_name:         string,
     team_organization: string,
     team_country:      string,
-    team_program:      string,
+    team_program:      ProgramData,
     team_grade:        string
 }
 

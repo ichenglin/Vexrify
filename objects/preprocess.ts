@@ -10,8 +10,15 @@ export default class PreProcess {
     // only process seasons with the following programs
     private static readonly SEASON_PROGRAM_CODES: string[] = ["VRC", "VEXU"];
 
-    public static get_event_season(event_id: number): any {
-        
+    public static get_event_season(event_id: number, event_program_code: string): SeasonData | undefined {
+        const event_season = PreProcess.processed_season_data.find(season_data_events => {
+            if (season_data_events.season_data.season_program.program_code !== event_program_code) return false;
+            if (season_data_events.season_events.id_min                    >   event_id)           return false;
+            if (season_data_events.season_events.id_max                    <   event_id)           return false;
+            if (season_data_events.season_events.id_all.includes(event_id) !== true)               return false;
+            return true;
+        });
+        return event_season?.season_data;
     }
 
     public static async preprocess_event_season(): Promise<void> {
@@ -24,20 +31,21 @@ export default class PreProcess {
         }
         const seasons_result = seasons_list.map((season_data, season_index) => {
             const season_events_sorted = seasons_events[season_index].map(season_data => season_data.event_id).sort();
+            if (season_events_sorted.length <= 0) return null;
             return {
                 season_data:   season_data,
                 season_events: {
                     id_all: season_events_sorted,
-                    id_min: ((season_events_sorted.length > 0) ? season_events_sorted[0]                               : null),
-                    id_max: ((season_events_sorted.length > 0) ? season_events_sorted[season_events_sorted.length - 1] : null)
+                    id_min: season_events_sorted[0],
+                    id_max: season_events_sorted[season_events_sorted.length - 1]
                 }
             } as SeasonDataEvents;
-        });
+        }).filter(season_data => season_data !== null) as SeasonDataEvents[];
         PreProcess.processed_season_data = seasons_result;
         // log
         Logger.send_log([
             "Completed Event Season Preprocess:",
-            ...seasons_result.map(result_data => `[${result_data.season_data.season_name}] Events: ${result_data.season_events.id_min}~${result_data.season_events.id_max}`)
+            ...seasons_result.map(result_data => `(${result_data.season_data.season_id}) [${result_data.season_data.season_name}] Events: ${result_data.season_events.id_min}~${result_data.season_events.id_max}`)
         ].join("\n"));
     }
 

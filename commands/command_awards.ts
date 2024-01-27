@@ -1,8 +1,9 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import VerificationPriority from "../utilities/priority";
-import RobotEvent from "../objects/robotevent";
+import RobotEvent, { EventDataSimplified } from "../objects/robotevent";
 import VerificationCommand from "../templates/template_command";
 import VerificationDisplay from "../utilities/display";
+import PreProcess from "../objects/preprocess";
 
 export default class AwardsCommand extends VerificationCommand {
 
@@ -43,11 +44,11 @@ export default class AwardsCommand extends VerificationCommand {
             await command_interaction.editReply({embeds: [invalid_embed]});
             return;
         }
-        const team_awards_classified = new Map<string, string[]>();
+        const team_awards_classified = new Map<string, EventDataSimplified[]>();
         for (let award_index = 0; award_index < team_awards.length; award_index++) {
             const award_data = team_awards[award_index];
             if (!team_awards_classified.has(award_data.award_name)) team_awards_classified.set(award_data.award_name, []);
-            team_awards_classified.get(award_data.award_name)?.push(award_data.award_event.event_name);
+            team_awards_classified.get(award_data.award_name)?.push(award_data.award_event);
         }
         const team_awards_sorted = Array.from(team_awards_classified.entries()).map(award_data => ({award_name: award_data[0], award_events: award_data[1]})).sort((award_a, award_b) => VerificationPriority.priority_awards(award_b.award_name) - VerificationPriority.priority_awards(award_a.award_name));
         const awards_embed = new EmbedBuilder()
@@ -57,7 +58,7 @@ export default class AwardsCommand extends VerificationCommand {
                 ...team_awards_sorted.map((award_data) => {
                     const message_limit      = "(and more events...)\n";
                     let award_events_display = "";
-                    let award_events         = award_data.award_events.map((event_data, event_index) => `${VerificationDisplay.LIST_MARKER} \`${event_data}\`\n`);
+                    let award_events         = award_data.award_events.reverse().map((event_data, event_index) => `${VerificationDisplay.LIST_MARKER} \`(${PreProcess.get_event_season(event_data.event_id, team_data.team_program.program_code)?.season_name}) ${event_data.event_name}\`\n`);
                     for (let event_index = 0; event_index < award_events.length; event_index++) {
                         const event_string       = award_events[event_index];
                         const display_length_new = (award_events_display.length + event_string.length + message_limit.length);
