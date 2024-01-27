@@ -1,6 +1,6 @@
 import { AttachmentBuilder, ChatInputCommandInteraction, EmbedBuilder, InteractionEditReplyOptions, MessagePayload, SlashCommandBuilder } from "discord.js";
 import * as NodeChartJS from "chartjs-node-canvas";
-import RobotEvent, { SeasonData } from "../objects/robotevent";
+import RobotEvent, { SeasonDataSimplified } from "../objects/robotevent";
 import VerificationCommand from "../templates/template_command";
 import VerificationDisplay from "../utilities/display";
 
@@ -43,7 +43,7 @@ export default class SkillsCommand extends VerificationCommand {
             await command_interaction.editReply({embeds: [invalid_embed]});
             return;
         }
-        const team_season_data: SeasonData[] = [];
+        const team_season_data: SeasonDataSimplified[] = [];
         for (let skill_index = 0; skill_index < team_skills.length; skill_index++) {
             const skill_data = team_skills[skill_index];
             // if driver score and programming score is both 0, won't exist in season skill
