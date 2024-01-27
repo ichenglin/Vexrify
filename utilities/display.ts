@@ -2,7 +2,10 @@ import { APIEmbedField, ActionRowBuilder, ActionRowData, AnyComponentBuilder, At
 
 export default class VerificationDisplay {
 
-    public static readonly LIST_MARKER = "<:vrc_dot_blue:1135437387619639316>";
+    public static readonly EMOJI = {
+        LIST_MARKER: "<:vrc_dot_blue:1135437387619639316>",
+        VRC_LOGO:    "<:vrc_logo:1200947268925263982>"
+    };
 
     public static string_list(string_items: string[]): string {
         if      (string_items.length <= 0)  return "";

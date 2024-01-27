@@ -27,8 +27,8 @@ export default class HelpCommand extends VerificationCommand {
                     name: `🏷️ ${command_full}`,
                     value: [
                         `\`${command_signature.description}\``,
-                        `${VerificationDisplay.LIST_MARKER} Prerequisites: \`${(command_signature.default_member_permissions !== undefined ? `⚠️ ${command_permissions} Permission` : "✅ None")}\``,
-                        `${VerificationDisplay.LIST_MARKER} Compatibility: \`${(command_signature.dm_permission              === false)    ? "⚠️ Guild Only"             : "✅ All"}\``
+                        `${VerificationDisplay.EMOJI.LIST_MARKER} Prerequisites: \`${(command_signature.default_member_permissions !== undefined ? `⚠️ ${command_permissions} Permission` : "✅ None")}\``,
+                        `${VerificationDisplay.EMOJI.LIST_MARKER} Compatibility: \`${(command_signature.dm_permission              === false)    ? "⚠️ Guild Only"             : "✅ All"}\``
                     ].join("\n")
                 };
             }))
@@ -36,8 +36,8 @@ export default class HelpCommand extends VerificationCommand {
                 name: "🔔 Ping Team (#[team])",
                 value: [
                     "\`Pings all users from a team in text messages.\`",
-                    `${VerificationDisplay.LIST_MARKER} Prerequisites: \`✅ None\``,
-                    `${VerificationDisplay.LIST_MARKER} Compatibility: \`⚠️ Guild Only\``
+                    `${VerificationDisplay.EMOJI.LIST_MARKER} Prerequisites: \`✅ None\``,
+                    `${VerificationDisplay.EMOJI.LIST_MARKER} Compatibility: \`⚠️ Guild Only\``
                 ].join("\n")
             })
             .setTimestamp()

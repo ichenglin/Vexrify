@@ -70,7 +70,7 @@ export default class AwardsCommand extends VerificationCommand {
                 ...team_awards_sorted.map((award_data) => {
                     const message_limit      = "(and more events...)\n";
                     let award_events_display = "";
-                    let award_events         = award_data.award_events.reverse().map((event_data, event_index) => `${VerificationDisplay.LIST_MARKER} **\`(${event_data.event_season.season_name})\`** \`${event_data.event_data.event_name}\`\n`);
+                    let award_events         = award_data.award_events.reverse().map((event_data, event_index) => `${VerificationDisplay.EMOJI.LIST_MARKER} **\`(${event_data.event_season.season_name})\`** \`${event_data.event_data.event_name}\`\n`);
                     for (let event_index = 0; event_index < award_events.length; event_index++) {
                         const event_string       = award_events[event_index];
                         const display_length_new = (award_events_display.length + event_string.length + message_limit.length);
@@ -96,7 +96,7 @@ export default class AwardsCommand extends VerificationCommand {
                 return new StringSelectMenuOptionBuilder()
                     .setLabel(`${season_name_matcher[1]} ${season_name_matcher[2]}`)
                     .setDescription(season_name_matcher[3])
-                    .setEmoji("📅")
+                    .setEmoji(VerificationDisplay.EMOJI.VRC_LOGO)
                     .setValue(season_data.season_id.toString());
             }));
         const awards_actionrow = new ActionRowBuilder().addComponents(awards_selector_seasons);
