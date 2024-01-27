@@ -1,6 +1,6 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from "discord.js";
 import VerificationPriority from "../utilities/priority";
-import RobotEvent, { EventDataSimplified } from "../objects/robotevent";
+import RobotEvent, { EventDataSimplified, SeasonData } from "../objects/robotevent";
 import VerificationCommand from "../templates/template_command";
 import VerificationDisplay from "../utilities/display";
 import PreProcess from "../objects/preprocess";
@@ -50,7 +50,19 @@ export default class AwardsCommand extends VerificationCommand {
             if (!team_awards_classified.has(award_data.award_name)) team_awards_classified.set(award_data.award_name, []);
             team_awards_classified.get(award_data.award_name)?.push(award_data.award_event);
         }
-        const team_awards_sorted = Array.from(team_awards_classified.entries()).map(award_data => ({award_name: award_data[0], award_events: award_data[1]})).sort((award_a, award_b) => VerificationPriority.priority_awards(award_b.award_name) - VerificationPriority.priority_awards(award_a.award_name));
+        const team_seasons: SeasonData[] = [];
+        const team_awards_sorted = Array.from(team_awards_classified.entries()).map(award_data => ({
+            award_name:       award_data[0],
+            award_events: award_data[1].map(award_event => {
+                const event_season = PreProcess.get_event_season(award_event.event_id, team_data.team_program.program_code) as SeasonData;
+                if (team_seasons.find(team_season => team_season.season_id === event_season.season_id) === undefined) team_seasons.push(event_season);
+                return {
+                    event_data:   award_event,
+                    event_season: event_season
+                };
+            })})
+        ).sort((award_a, award_b) => VerificationPriority.priority_awards(award_b.award_name) - VerificationPriority.priority_awards(award_a.award_name));
+        // generate embed
         const awards_embed = new EmbedBuilder()
             .setTitle(`🏅 ${team_data.team_name}'s Awards 🏅`)
             .setDescription(`**${team_data.team_name} (${team_data.team_number})** had won a total of **${team_awards.length} awards**, below are the details of the awards and their events.\n\u200B`)
@@ -58,7 +70,7 @@ export default class AwardsCommand extends VerificationCommand {
                 ...team_awards_sorted.map((award_data) => {
                     const message_limit      = "(and more events...)\n";
                     let award_events_display = "";
-                    let award_events         = award_data.award_events.reverse().map((event_data, event_index) => `${VerificationDisplay.LIST_MARKER} \`(${PreProcess.get_event_season(event_data.event_id, team_data.team_program.program_code)?.season_name}) ${event_data.event_name}\`\n`);
+                    let award_events         = award_data.award_events.reverse().map((event_data, event_index) => `${VerificationDisplay.LIST_MARKER} **\`(${event_data.event_season.season_name})\`** \`${event_data.event_data.event_name}\`\n`);
                     for (let event_index = 0; event_index < award_events.length; event_index++) {
                         const event_string       = award_events[event_index];
                         const display_length_new = (award_events_display.length + event_string.length + message_limit.length);
@@ -73,8 +85,23 @@ export default class AwardsCommand extends VerificationCommand {
             .setTimestamp()
             .setFooter({text: `requested by ${command_interaction.user.tag}`, iconURL: command_interaction.client.user.displayAvatarURL()})
             .setColor("#84cc16");
+        // generate dropdown
+        const awards_selector_seasons = new StringSelectMenuBuilder()
+            .setCustomId("awards-season")
+            .setPlaceholder("Filter by Season")
+            .setMinValues(0)
+            .setMaxValues(team_seasons.length)
+            .addOptions(team_seasons.sort((season_a, season_b) => season_b.season_id - season_a.season_id).map(season_data => {
+                const season_name_matcher = season_data.season_name.match(/^\s*(\w+) (\d{4}-\d{4}): ([\w ]*\w)\s*$/) as RegExpMatchArray;
+                return new StringSelectMenuOptionBuilder()
+                    .setLabel(`${season_name_matcher[1]} ${season_name_matcher[2]}`)
+                    .setDescription(season_name_matcher[3])
+                    .setEmoji("📅")
+                    .setValue(season_data.season_id.toString());
+            }));
+        const awards_actionrow = new ActionRowBuilder().addComponents(awards_selector_seasons);
         // send embed
-        const embed_safe = VerificationDisplay.embed_safe(awards_embed);
+        const embed_safe = VerificationDisplay.embed_safe(awards_embed, undefined, [awards_actionrow]);
         await command_interaction.editReply(embed_safe[0]);
         for (const embed_children of embed_safe.slice(1)) await command_interaction.channel?.send(embed_children);
     }

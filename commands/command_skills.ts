@@ -116,7 +116,7 @@ export default class SkillsCommand extends VerificationCommand {
         }}});
         const skills_image = new AttachmentBuilder(skills_buffer, {name: "skills_graph.png"});
         // send embed
-        const embed_safe = VerificationDisplay.embed_safe(skills_embed, [skills_image]);
+        const embed_safe = VerificationDisplay.embed_safe(skills_embed, [skills_image], undefined);
         await command_interaction.editReply(embed_safe[0]);
         for (const embed_children of embed_safe.slice(1)) await command_interaction.channel?.send(embed_children);
     }

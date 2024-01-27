@@ -1,4 +1,4 @@
-import { APIEmbedField, AttachmentBuilder, BaseMessageOptions, EmbedBuilder, PermissionFlagsBits } from "discord.js";
+import { APIEmbedField, ActionRowBuilder, ActionRowData, AnyComponentBuilder, AttachmentBuilder, BaseMessageOptions, EmbedBuilder, MessageActionRowComponentBuilder, PermissionFlagsBits } from "discord.js";
 
 export default class VerificationDisplay {
 
@@ -23,7 +23,7 @@ export default class VerificationDisplay {
         return permission_flag_used;
     }
 
-    public static embed_safe(embed_data: EmbedBuilder, attachment_data?: AttachmentBuilder[]): BaseMessageOptions[] {
+    public static embed_safe(embed_data: EmbedBuilder, attachment_data: (AttachmentBuilder[] | undefined), component_data: (ActionRowBuilder<AnyComponentBuilder>[] | undefined)): BaseMessageOptions[] {
         const embed_header_length = [
             embed_data.data.title,
             embed_data.data.description,
@@ -63,7 +63,11 @@ export default class VerificationDisplay {
                 group_embed.setFooter(     embed_data.data.footer    !== undefined ? {text: embed_data.data.footer.text, iconURL: embed_data.data.footer.icon_url} : null);
                 group_embed.setTimestamp(  embed_data.data.timestamp !== undefined ? new Date(embed_data.data.timestamp)                                           : null);
             }
-            embed_group.push({embeds: [group_embed], files: (group_footer ? attachment_data : undefined)});
+            embed_group.push({
+                embeds:     [group_embed],
+                files:      (group_footer ? attachment_data         : undefined),
+                components: (group_footer ? (component_data as any) : undefined)
+            });
         }
         return embed_group;
     }

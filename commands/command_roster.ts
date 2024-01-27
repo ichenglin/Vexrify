@@ -50,7 +50,7 @@ export default class RosterCommand extends VerificationCommand {
             .setFooter({text: `requested by ${command_interaction.user.tag}`, iconURL: command_interaction.client.user.displayAvatarURL()})
             .setColor("#84cc16");
         // send embed
-        const embed_safe = VerificationDisplay.embed_safe(roster_embed);
+        const embed_safe = VerificationDisplay.embed_safe(roster_embed, undefined, undefined);
         await command_interaction.editReply(embed_safe[0]);
         for (const embed_children of embed_safe.slice(1)) await command_interaction.channel?.send(embed_children);
     }
