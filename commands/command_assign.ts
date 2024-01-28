@@ -96,8 +96,8 @@ export default class AssignCommand extends VerificationCommand {
             .addFields([(updated_team) && {
                 name: `🏦 Team Number 🏦`,
                 value: [
-                    (team_data !== undefined) ? `${VerificationDisplay.LIST_MARKER} Country: ${CountryFlag.get_flag(team_data.team_country)} \`${team_data.team_country}\`` : undefined,
-                    (team_data !== undefined) ? `${VerificationDisplay.LIST_MARKER} Organization: \`${team_data.team_organization}\``                                       : undefined,
+                    (team_data !== undefined) ? `${VerificationDisplay.EMOJI.LIST_MARKER} Country: ${CountryFlag.get_flag(team_data.team_country)} \`${team_data.team_country}\`` : undefined,
+                    (team_data !== undefined) ? `${VerificationDisplay.EMOJI.LIST_MARKER} Organization: \`${team_data.team_organization}\``                                       : undefined,
                     `\`\`\`diff\n- ${user_data.user_team_number}\n+ ${assign_team}\`\`\``
                 ].join("\n")
             }, (updated_name) && {

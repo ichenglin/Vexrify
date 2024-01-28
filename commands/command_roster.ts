@@ -39,8 +39,8 @@ export default class RosterCommand extends VerificationCommand {
                         name:  `${loop_team.team_number}`,
                         value: [
                             `\`${loop_team_data.team_name}\``,
-                            `${VerificationDisplay.LIST_MARKER} Country: ${CountryFlag.get_flag(loop_team_data.team_country)}`,
-                            `${VerificationDisplay.LIST_MARKER} Grade: \`${loop_team_data.team_grade}\``,
+                            `${VerificationDisplay.EMOJI.LIST_MARKER} Country: ${CountryFlag.get_flag(loop_team_data.team_country)}`,
+                            `${VerificationDisplay.EMOJI.LIST_MARKER} Grade: \`${loop_team_data.team_grade}\``,
                             ...loop_team.team_users.map(loop_user => `<@${loop_user.user_id}>`)
                         ].join("\n"),
                         inline: true
@@ -50,7 +50,7 @@ export default class RosterCommand extends VerificationCommand {
             .setFooter({text: `requested by ${command_interaction.user.tag}`, iconURL: command_interaction.client.user.displayAvatarURL()})
             .setColor("#84cc16");
         // send embed
-        const embed_safe = VerificationDisplay.embed_safe(roster_embed);
+        const embed_safe = VerificationDisplay.embed_safe(roster_embed, undefined, undefined);
         await command_interaction.editReply(embed_safe[0]);
         for (const embed_children of embed_safe.slice(1)) await command_interaction.channel?.send(embed_children);
     }

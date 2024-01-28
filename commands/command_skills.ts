@@ -1,6 +1,6 @@
 import { AttachmentBuilder, ChatInputCommandInteraction, EmbedBuilder, InteractionEditReplyOptions, MessagePayload, SlashCommandBuilder } from "discord.js";
 import * as NodeChartJS from "chartjs-node-canvas";
-import RobotEvent, { SeasonData } from "../objects/robotevent";
+import RobotEvent, { SeasonDataSimplified } from "../objects/robotevent";
 import VerificationCommand from "../templates/template_command";
 import VerificationDisplay from "../utilities/display";
 
@@ -43,7 +43,7 @@ export default class SkillsCommand extends VerificationCommand {
             await command_interaction.editReply({embeds: [invalid_embed]});
             return;
         }
-        const team_season_data: SeasonData[] = [];
+        const team_season_data: SeasonDataSimplified[] = [];
         for (let skill_index = 0; skill_index < team_skills.length; skill_index++) {
             const skill_data = team_skills[skill_index];
             // if driver score and programming score is both 0, won't exist in season skill
@@ -67,9 +67,9 @@ export default class SkillsCommand extends VerificationCommand {
             .addFields(
                 ...team_season_skills_sorted.map((skill_data) => (
                     {name: `🏁 ${skill_data.season_data.season_name} 🏁`, value: [
-                        `${VerificationDisplay.LIST_MARKER} Rank: \`#${skill_data.season_skills.skills_rank}\` out of ${skill_data.season_skills.skills_entries} entries (\`Top ${Math.ceil(skill_data.season_skills.skills_rank / skill_data.season_skills.skills_entries * 100)}%\`)`,
-                        `${VerificationDisplay.LIST_MARKER} Driver: \`${skill_data.season_skills.skills_score.driver_score}\``,
-                        `${VerificationDisplay.LIST_MARKER} Programming: \`${skill_data.season_skills.skills_score.programming_score}\``
+                        `${VerificationDisplay.EMOJI.LIST_MARKER} Rank: \`#${skill_data.season_skills.skills_rank}\` out of ${skill_data.season_skills.skills_entries} entries (\`Top ${Math.ceil(skill_data.season_skills.skills_rank / skill_data.season_skills.skills_entries * 100)}%\`)`,
+                        `${VerificationDisplay.EMOJI.LIST_MARKER} Driver: \`${skill_data.season_skills.skills_score.driver_score}\``,
+                        `${VerificationDisplay.EMOJI.LIST_MARKER} Programming: \`${skill_data.season_skills.skills_score.programming_score}\``
                     ].join("\n")}
                 )))
             .setImage("attachment://skills_graph.png")
@@ -116,7 +116,7 @@ export default class SkillsCommand extends VerificationCommand {
         }}});
         const skills_image = new AttachmentBuilder(skills_buffer, {name: "skills_graph.png"});
         // send embed
-        const embed_safe = VerificationDisplay.embed_safe(skills_embed, [skills_image]);
+        const embed_safe = VerificationDisplay.embed_safe(skills_embed, [skills_image], undefined);
         await command_interaction.editReply(embed_safe[0]);
         for (const embed_children of embed_safe.slice(1)) await command_interaction.channel?.send(embed_children);
     }

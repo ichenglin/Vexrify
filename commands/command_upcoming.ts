@@ -66,10 +66,10 @@ export default class UpcomingCommand extends VerificationCommand {
                     return {
                         name: `📌 ${event_data.event_name} 📌`,
                         value: [
-                            `${VerificationDisplay.LIST_MARKER} Location: ${CountryFlag.get_flag(event_data.event_location.address_country)} \`${event_region}\``,
-                            `${VerificationDisplay.LIST_MARKER} Date: <t:${Math.floor(event_data.event_date.date_begin / 1000)}:R>`,
-                            `${VerificationDisplay.LIST_MARKER} Teams: \`${event_teams_list}\` and \`${event_teams_excluded}\` more team(s)...`,
-                            `${VerificationDisplay.LIST_MARKER} Links: ${event_links.map(link_data => `[**\`${link_data.link_name}\`**](${link_data.link_url})`).join(", ")}`,
+                            `${VerificationDisplay.EMOJI.LIST_MARKER} Location: ${CountryFlag.get_flag(event_data.event_location.address_country)} \`${event_region}\``,
+                            `${VerificationDisplay.EMOJI.LIST_MARKER} Date: <t:${Math.floor(event_data.event_date.date_begin / 1000)}:R>`,
+                            `${VerificationDisplay.EMOJI.LIST_MARKER} Teams: \`${event_teams_list}\` and \`${event_teams_excluded}\` more team(s)...`,
+                            `${VerificationDisplay.EMOJI.LIST_MARKER} Links: ${event_links.map(link_data => `[**\`${link_data.link_name}\`**](${link_data.link_url})`).join(", ")}`,
                             `\u200B`
                         ].join("\n")
                     }
@@ -78,7 +78,7 @@ export default class UpcomingCommand extends VerificationCommand {
             .setFooter({text: `requested by ${command_interaction.user.tag}`, iconURL: command_interaction.client.user.displayAvatarURL()})
             .setColor("#84cc16");
         // send embed
-        const embed_safe = VerificationDisplay.embed_safe(events_embed);
+        const embed_safe = VerificationDisplay.embed_safe(events_embed, undefined, undefined);
         await command_interaction.editReply(embed_safe[0]);
         for (const embed_children of embed_safe.slice(1)) await command_interaction.channel?.send(embed_children);
     }

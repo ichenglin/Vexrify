@@ -72,9 +72,9 @@ export default class VerifyModal extends VerificationModal {
             .addFields([{
                 name: team_data.team_name,
                 value: [
-                    `${VerificationDisplay.LIST_MARKER} Organization: \`${team_data.team_organization}\``,
-                    `${VerificationDisplay.LIST_MARKER} Country: ${CountryFlag.get_flag(team_data.team_country)} \`${team_data.team_country}\``,
-                    `${VerificationDisplay.LIST_MARKER} Grade: \`${team_data.team_grade}\``
+                    `${VerificationDisplay.EMOJI.LIST_MARKER} Organization: \`${team_data.team_organization}\``,
+                    `${VerificationDisplay.EMOJI.LIST_MARKER} Country: ${CountryFlag.get_flag(team_data.team_country)} \`${team_data.team_country}\``,
+                    `${VerificationDisplay.EMOJI.LIST_MARKER} Grade: \`${team_data.team_grade}\``
                 ].join("\n")
             }, ((form_reason.length <= 0) || {
                 name: "Additional Information",

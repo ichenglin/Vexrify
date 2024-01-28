@@ -1,8 +1,11 @@
-import { APIEmbedField, AttachmentBuilder, BaseMessageOptions, EmbedBuilder, PermissionFlagsBits } from "discord.js";
+import { APIEmbedField, ActionRowBuilder, AnyComponentBuilder, AttachmentBuilder, BaseMessageOptions, ChatInputCommandInteraction, EmbedBuilder, Message, PermissionFlagsBits, TextBasedChannel } from "discord.js";
 
 export default class VerificationDisplay {
 
-    public static readonly LIST_MARKER = "<:vrc_dot_blue:1135437387619639316>";
+    public static readonly EMOJI = {
+        LIST_MARKER: "<:vrc_dot_blue:1135437387619639316>",
+        VRC_LOGO:    "<:vrc_logo:1200947268925263982>"
+    };
 
     public static string_list(string_items: string[]): string {
         if      (string_items.length <= 0)  return "";
@@ -23,7 +26,7 @@ export default class VerificationDisplay {
         return permission_flag_used;
     }
 
-    public static embed_safe(embed_data: EmbedBuilder, attachment_data?: AttachmentBuilder[]): BaseMessageOptions[] {
+    public static embed_safe(embed_data: EmbedBuilder, attachment_data: (AttachmentBuilder[] | undefined), component_data: (ActionRowBuilder<AnyComponentBuilder>[] | undefined)): BaseMessageOptions[] {
         const embed_header_length = [
             embed_data.data.title,
             embed_data.data.description,
@@ -63,9 +66,21 @@ export default class VerificationDisplay {
                 group_embed.setFooter(     embed_data.data.footer    !== undefined ? {text: embed_data.data.footer.text, iconURL: embed_data.data.footer.icon_url} : null);
                 group_embed.setTimestamp(  embed_data.data.timestamp !== undefined ? new Date(embed_data.data.timestamp)                                           : null);
             }
-            embed_group.push({embeds: [group_embed], files: (group_footer ? attachment_data : undefined)});
+            embed_group.push({
+                embeds:     [group_embed],
+                files:      (group_footer ? attachment_data         : undefined),
+                components: (group_footer ? (component_data as any) : undefined)
+            });
         }
         return embed_group;
+    }
+
+    public static async embed_editreply(interaction: ChatInputCommandInteraction, embed_group: BaseMessageOptions[], embed_messages_old: Message<boolean>[] = []): Promise<Message<boolean>[]> {
+        if (embed_messages_old.length > 1) await Promise.all(embed_messages_old.slice(1).map(message_old => message_old.delete()));
+        const embed_messages: Message<boolean>[] = [];
+        embed_messages.push(await interaction.editReply(embed_group[0]));
+        for (const embed_children of embed_group.slice(1)) embed_messages.push(await (interaction.channel as TextBasedChannel).send(embed_children));
+        return embed_messages;
     }
 
 }
