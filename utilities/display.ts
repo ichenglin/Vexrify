@@ -1,4 +1,4 @@
-import { APIEmbedField, ActionRowBuilder, ActionRowData, AnyComponentBuilder, AttachmentBuilder, BaseMessageOptions, EmbedBuilder, MessageActionRowComponentBuilder, PermissionFlagsBits } from "discord.js";
+import { APIEmbedField, ActionRowBuilder, AnyComponentBuilder, AttachmentBuilder, BaseMessageOptions, ChatInputCommandInteraction, EmbedBuilder, Message, PermissionFlagsBits, TextBasedChannel } from "discord.js";
 
 export default class VerificationDisplay {
 
@@ -73,6 +73,14 @@ export default class VerificationDisplay {
             });
         }
         return embed_group;
+    }
+
+    public static async embed_editreply(interaction: ChatInputCommandInteraction, embed_group: BaseMessageOptions[], embed_messages_old: Message<boolean>[] = []): Promise<Message<boolean>[]> {
+        if (embed_messages_old.length > 1) await Promise.all(embed_messages_old.slice(1).map(message_old => message_old.delete()));
+        const embed_messages: Message<boolean>[] = [];
+        embed_messages.push(await interaction.editReply(embed_group[0]));
+        for (const embed_children of embed_group.slice(1)) embed_messages.push(await (interaction.channel as TextBasedChannel).send(embed_children));
+        return embed_messages;
     }
 
 }
