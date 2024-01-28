@@ -68,8 +68,8 @@ export default class VerificationDisplay {
             }
             embed_group.push({
                 embeds:     [group_embed],
-                files:      (group_footer ? attachment_data         : undefined),
-                components: (group_footer ? (component_data as any) : undefined)
+                files:      (group_footer ? attachment_data         : []),
+                components: (group_footer ? (component_data as any) : [])
             });
         }
         return embed_group;
