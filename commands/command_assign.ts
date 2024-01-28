@@ -110,7 +110,7 @@ export default class AssignCommand extends VerificationCommand {
         const permission_owner = VerificationUser.permission_owner(command_interaction.guild as Guild, assign_user);
         const permission_embed = new EmbedBuilder()
             .setTitle("⚠️ No Permission ⚠️")
-            .setDescription(`The verification bot **couldn't edit the guild owner's nickname** due to Discord restrictions, please update their nickname manually.`)
+            .setDescription(`The bot **couldn't edit the guild owner's nickname** due to Discord restrictions, please update their nickname manually.`)
             .setColor("#f97316");
         await VerificationUser.username_set(command_interaction.guild as Guild, assign_user, `${new_name} | ${new_team_number}`);
         await command_interaction.editReply({embeds: (!permission_owner ? [assign_embed] : [assign_embed, permission_embed])});

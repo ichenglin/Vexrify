@@ -50,7 +50,7 @@ export default class NickCommand extends VerificationCommand {
         const permission_owner = VerificationUser.permission_owner(command_interaction.guild as Guild, command_interaction.user);
         const permission_embed = new EmbedBuilder()
             .setTitle("⚠️ No Permission ⚠️")
-            .setDescription(`The verification bot **couldn't edit the guild owner's nickname** due to Discord restrictions, please update your nickname manually. **(Do not report this as a bug)**`)
+            .setDescription(`The bot **couldn't edit the guild owner's nickname** due to Discord restrictions, please update your nickname manually. **(Do not report this as a bug)**`)
             .setColor("#f97316");
         await command_interaction.editReply({embeds: (!permission_owner ? [nick_embed] : [nick_embed, permission_embed])});
         await VerificationUser.data_add(user_data);

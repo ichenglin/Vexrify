@@ -14,8 +14,8 @@ export default class HelpCommand extends VerificationCommand {
     public async command_trigger(command_interaction: ChatInputCommandInteraction): Promise<void> {
         await command_interaction.deferReply();
         const help_embed = new EmbedBuilder()
-            .setTitle("🌟 VRC Verification 🌟")
-            .setDescription(`**VRC Verification** is a discord bot made for **Vex Robotics Competition**, assisting discord communities with **statistics lookup** and **identity verification** services.\n\u200B`)
+            .setTitle("🌟 Vexrify 🌟")
+            .setDescription(`**Vexrify** is a discord bot made for **Vex Robotics Competition**, assisting discord communities with **statistics lookup** and **identity verification** services.\n\u200B`)
             .addFields(verification_registry.command_signatures().map(command_signature => {
                 const command_parameters = command_signature.options.map(command_option => {
                     const command_data = command_option.toJSON();
