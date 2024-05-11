@@ -1,4 +1,4 @@
-import { Client } from "discord.js";
+import { Client, Events } from "discord.js";
 import Logger from "../objects/logger";
 import VerificationEvent from "../templates/template_event";
 import PreProcess from "../objects/preprocess";
@@ -7,7 +7,7 @@ export default class ReadyEvent extends VerificationEvent {
 
     public event_configuration(): {name: string} {
         return {
-            name: "ready"
+            name: Events.ClientReady
         };
     }
 

@@ -47,5 +47,6 @@ export interface VerificationUserData {
     guild_id:         string,
     user_team_id:     number,
     user_team_number: string,
-    user_name:        string
+    user_name:        string,
+    user_active:      number
 }

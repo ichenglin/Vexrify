@@ -1,4 +1,4 @@
-import { BaseInteraction, ChatInputCommandInteraction, EmbedBuilder, InteractionType } from "discord.js";
+import { BaseInteraction, ChatInputCommandInteraction, EmbedBuilder, Events, InteractionType } from "discord.js";
 import { verification_registry } from "..";
 import Logger from "../objects/logger";
 import VerificationEvent from "../templates/template_event";
@@ -7,7 +7,7 @@ export default class InteractionCreateEvent extends VerificationEvent {
 
     public event_configuration(): {name: string} {
         return {
-            name: "interactionCreate"
+            name: Events.InteractionCreate
         };
     }
 

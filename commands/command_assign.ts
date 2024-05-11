@@ -27,15 +27,19 @@ export default class AssignCommand extends VerificationCommand {
             .setDescription("(Optional) The new nickname of the user.")
             .setMaxLength(16)
             .setMinLength(1)
+        ).addBooleanOption(option => option
+            .setName("active")
+            .setDescription("(Optional) The status of the user.")
         );
         return command_builder;
     }
 
     public async command_trigger(command_interaction: ChatInputCommandInteraction): Promise<void> {
         await command_interaction.deferReply();
-        const assign_user = command_interaction.options.getUser("user", true);
-        const assign_team = command_interaction.options.getString("team")?.toUpperCase();
-        const assign_name = command_interaction.options.getString("name");
+        const assign_user   =        command_interaction.options.getUser   ("user",   true);
+        const assign_team   =        command_interaction.options.getString ("team",   false)?.toUpperCase();
+        const assign_name   =        command_interaction.options.getString ("name",   false);
+        const assign_active = Number(command_interaction.options.getBoolean("active", false));
         const team_data = (assign_team !== undefined) ? await RobotEvent.get_team_by_number(assign_team) : undefined;
         // check for valid team id
         if (assign_team !== undefined && team_data === undefined) {
@@ -67,27 +71,30 @@ export default class AssignCommand extends VerificationCommand {
             return;
         }
         // send embed
-        const updated_team = (assign_team !== undefined) && (assign_team !== user_data.user_team_number);
-        const updated_name = (assign_name !== null)      && (assign_name !== user_data.user_name);
-        if (updated_team === false && updated_name === false) {
+        const updated_team   = (assign_team   !== undefined) && (assign_team   !== user_data.user_team_number);
+        const updated_name   = (assign_name   !== null)      && (assign_name   !== user_data.user_name);
+        const updated_active = (assign_active !== null)      && (assign_active !== user_data.user_active);
+        if (updated_team === false && updated_name === false && updated_active === false) {
             // nothing is updated
             const permission_embed = new EmbedBuilder()
                 .setTitle("⛔ Invalid Update ⛔")
-                .setDescription(`You must provide a new **team number** or **nickname** to use this command!`)
+                .setDescription(`You must provide a new **team number**, **nickname**, or **status** to use this command!`)
                 .setColor("#ef4444");
             await command_interaction.editReply({embeds: [permission_embed]});
             return;
         }
-        const new_team_id     = (updated_team) ? team_data?.team_id     as number : user_data.user_team_id;
-        const new_team_number = (updated_team) ? team_data?.team_number as string : user_data.user_team_number;
-        const new_name        = (updated_name) ? assign_name                      : user_data.user_name;
+        const new_team_id     = (updated_team)   ? team_data?.team_id     as number : user_data.user_team_id;
+        const new_team_number = (updated_team)   ? team_data?.team_number as string : user_data.user_team_number;
+        const new_name        = (updated_name)   ? assign_name                      : user_data.user_name;
+        const new_active      = (updated_active) ? assign_active                    : user_data.user_active;
         // save to database
         await VerificationUser.data_add({
             user_id:          assign_user.id,
             guild_id:         command_interaction.guild?.id as string,
             user_team_id:     new_team_id,
             user_team_number: new_team_number,
-            user_name:        new_name
+            user_name:        new_name,
+            user_active:      new_active
         });
         // successful reply
         const assign_embed = new EmbedBuilder()
@@ -102,7 +109,10 @@ export default class AssignCommand extends VerificationCommand {
                 ].join("\n")
             }, (updated_name) && {
                 name: `🪪 User Nickname 🪪`,
-                value: `\`\`\`diff\n- ${user_data.user_name}\n+ ${assign_name}\`\`\``,
+                value: `\`\`\`diff\n- ${user_data.user_name}\n+ ${assign_name}\`\`\``
+            }, (updated_active) && {
+                name: `📍 User Status 📍`,
+                value: `\`\`\`diff\n- ${(user_data.user_active ? "active" : "inactive")}\n+ ${(assign_active ? "active" : "inactive")}\`\`\``,
                 inline: true
             }].filter(field_data => field_data !== false) as {name: string, value: string, inline?: boolean}[])
             .setColor("#84cc16");

@@ -44,7 +44,8 @@ export default class VerifyModal extends VerificationModal {
             guild_id:         modal_interaction.guild?.id as string,
             user_team_id:     team_data.team_id,
             user_team_number: form_team_number,
-            user_name:        form_user_name
+            user_name:        form_user_name,
+            user_active:      1
         });
         // successful reply
         const verified_embed = new EmbedBuilder()

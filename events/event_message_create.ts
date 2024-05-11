@@ -1,4 +1,4 @@
-import { EmbedBuilder, Message } from "discord.js";
+import { EmbedBuilder, Events, Message } from "discord.js";
 import remove_markdown from "remove-markdown";
 import Logger from "../objects/logger";
 import VerificationEvent from "../templates/template_event";
@@ -10,7 +10,7 @@ export default class MessageCreateEvent extends VerificationEvent {
 
     public event_configuration(): {name: string} {
         return {
-            name: "messageCreate"
+            name: Events.MessageCreate
         };
     }
 

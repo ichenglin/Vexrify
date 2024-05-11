@@ -80,7 +80,7 @@ export default class AwardsCommand extends VerificationCommand {
             .setTitle(`🏅 ${team_data.team_name}'s Awards 🏅`)
             .setDescription([
                 `**${team_data.team_name} (${team_data.team_number})** had won a total of **${awards_amount_all} awards**, below are the details of the awards and their events.`,
-                (filter_active ? `\n\n✨ **Applied Filter(s):** ${VerificationDisplay.string_list(filter_seasons.map(season_data => `\`${season_data.season_name}\``))} (${awards_amount_all - awards_amount_filtered} awards hidden)` : ""),
+                (filter_active ? `\n\n✨ **Applied Filter(s):** ${VerificationDisplay.string_list(filter_seasons.map(season_data => `\`${season_data.season_name}\``))} (${awards_amount_all - awards_amount_filtered} hidden awards)` : ""),
                 `\n\u200B`
             ].join(""))
             .addFields(
