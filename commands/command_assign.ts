@@ -65,7 +65,7 @@ export default class AssignCommand extends VerificationCommand {
             // user not verified
             const permission_embed = new EmbedBuilder()
                 .setTitle("⛔ User Not Verified ⛔")
-                .setDescription(`<@${assign_user.id}> **must be verified** to be assigned new a **team number** or **nickname**! If you believe this is in error, please contact an administrator.`)
+                .setDescription(`<@${assign_user.id}> **must be verified** to be assigned new a **team number**, **nickname**, or **status**! If you believe this is in error, please contact an administrator.`)
                 .setColor("#ef4444");
             await command_interaction.editReply({embeds: [permission_embed]});
             return;
