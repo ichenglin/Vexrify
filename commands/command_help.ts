@@ -33,7 +33,7 @@ export default class HelpCommand extends VerificationCommand {
                 };
             }))
             .addFields({
-                name: "🔔 Ping Team (#[team])",
+                name: "🔔 Ping Team (@[team] or #[team])",
                 value: [
                     "\`Pings all users from a team in text messages.\`",
                     `${VerificationDisplay.EMOJI.LIST_MARKER} Prerequisites: \`✅ None\``,

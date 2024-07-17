@@ -21,7 +21,7 @@ export default class MessageCreateEvent extends VerificationEvent {
 
     private async ping_event(message: Message): Promise<void> {
         const content_plain =  remove_markdown(message.content);
-        const ping_messages = [...new Set(Array.from(content_plain.matchAll(/(?<![^\s])#([a-zA-Z\d]+)(?![^\s])/g)).map(ping_data => ({
+        const ping_messages = [...new Set(Array.from(content_plain.matchAll(/(?<![^\s])[@#]([a-zA-Z\d]+)(?![^\s])/g)).map(ping_data => ({
             ping_full:    ping_data[0].toUpperCase(),
             ping_content: ping_data[1].toUpperCase(),
             ping_index:   ping_data.index
