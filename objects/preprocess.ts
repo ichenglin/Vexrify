@@ -8,7 +8,7 @@ export default class PreProcess {
     private static processed_season_data: SeasonDataEvents[] = [];
 
     // only process seasons with the following programs
-    private static readonly SEASON_PROGRAM_CODES: string[] = ["VRC", "VEXU"];
+    private static readonly SEASON_PROGRAM_CODES: string[] = ["V5RC", "VURC"];
 
     public static get_event_season(event_id: number, event_program_code: string): SeasonData | undefined {
         const event_season = PreProcess.processed_season_data.find(season_data_events => {
